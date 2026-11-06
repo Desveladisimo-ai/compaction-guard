@@ -8,9 +8,10 @@ Started 2026-11-06 from a working local setup built and tested over 2026-11-02 t
 
 | Piece | State |
 |---|---|
-| Problem timeline (what changed and when, with sources) | draft: `docs/01-timeline-draft.md` |
-| Incident write-ups (what was lost, measured records, what the gate did) | draft: `docs/02-incidents-draft.md` |
-| Plugin or skill design (what to package, how to ship it) | draft: `docs/03-plugin-design-draft.md` |
+| Problem timeline (what changed and when, with sources) | approved draft: `docs/01-timeline-draft.md` |
+| Incident write-ups (what was lost, measured records, what the gate did) | approved draft: `docs/02-incidents-draft.md` |
+| Plugin or skill design (what to package, how to ship it) | approved draft: `docs/03-plugin-design-draft.md` |
+| Feature decisions taken with the owner (defaults, handoff, ceiling) | `docs/04-feature-decisions.md` |
 | Sources with retrieval dates | `docs/sources.md` |
 | Plugin itself | not started |
 
