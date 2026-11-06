@@ -34,7 +34,7 @@ Before installing anything, a person can set `"idleCompaction": false` in their 
 ## Distribution
 
 1. Own marketplace: a git repository with `.claude-plugin/marketplace.json` listing the plugin. People run `claude plugin marketplace add <owner>/<repo>` and `claude plugin install compaction-guard@<marketplace-name>` (S9). The marketplace name must not be one of the reserved official names.
-2. Later: Anthropic's directory has a submission path (S8, S9); requires privacy and support links in the manifest.
+2. Later: Anthropic's directory has a submission path (S8, S9); it reads the icon, documentation, support, privacy and terms links from the manifest, so those fields should be filled in.
 3. Check before release: `claude plugin validate` on the plugin and the marketplace, in CI.
 
 ## Open questions (not verified)

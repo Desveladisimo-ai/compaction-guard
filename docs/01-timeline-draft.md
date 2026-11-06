@@ -4,7 +4,7 @@ Status: draft for review. Every row cites a source from `sources.md`. Changelog 
 
 ## The short version
 
-Automatic compaction has existed in Claude Code since 2025 and has had a warning and a blocking hook for a long time. What changed in October 2026 is **idle compaction**: a long conversation left alone for about 54 minutes is now summarized automatically, on by default, so the next message is cheaper to process. The off switch and a notice after the fact exist. A warning before it acts does not, as far as the sources show.
+Automatic compaction has existed in Claude Code since at least May 2025, with a context-left warning, and a hook that can block it since April 2026. What changed in October 2026 is **idle compaction**: a long conversation left alone for about 54 minutes is now summarized automatically, on by default, so the next message is cheaper to process. The off switch and a notice after the fact exist. A warning before it acts does not, as far as the sources show.
 
 ## Timeline
 
