@@ -11,10 +11,10 @@ Install in one step, work with defaults, no setup. Detection is automatic. When 
 | # | Decision | Reason |
 |---|---|---|
 | D1 | Block automatic compaction below a hard ceiling of 95% of the window; allow it at or above | The hooks reference says that blocking a compaction triggered to recover from a context-limit error makes the request fail, and the hook input has no field that tells the two cases apart. A ceiling keeps a session from getting stuck. The user is warned at 70% and 85% first |
-| D2 | The handoff lives outside the repository by default (plugin data folder, keyed by project) | No git noise, nothing private committed by accident. The message shows the path. The folder is deleted with the plugin on uninstall (documented behavior of the plugin data directory) |
+| D2 | The handoff lives outside the repository, in `~/.claude/compaction-guard/handoffs/<project>/` (changed during the build from the plugin data folder) | No git noise, nothing private committed by accident. The same root holds the state shared with the optional status line, which runs outside the plugin and cannot see the plugin data folder, and it survives plugin updates and uninstalls. The message shows the path |
 | D3 | The wrap-up writes only the handoff and durable memory entries | It never edits code, docs or settings. Stale documents it notices are listed for the user |
 | D4 | The status line is offered once and never forced | A plugin cannot set the main status line (only `agent` and `subagentStatusLine` take effect in plugin settings). Warnings work without it |
-| D5 | Install is two commands, or one line that runs both | `claude plugin marketplace add <owner>/<repo>` then `claude plugin install <name>@<marketplace>` (documented). Hooks are active with defaults after install |
+| D5 | Install is one command | `/plugin install compaction-guard --marketplace <owner>/<repo>`, which the plugin validator reports as working in one step on Claude Code 2.1.275 or later; the older two-step form (`claude plugin marketplace add`, then `claude plugin install <name>@<marketplace>`) is documented. Hooks are active with defaults after install |
 | D6 | A new session finds the handoff itself | A SessionStart hook adds the pending handoff to the context on `startup` and `clear`; `/clear` counts as a new session. The assistant confirms in one line before acting |
 | D7 | The assistant decides "end of a feature, clear boundary" using the gate rule; the hook only supplies facts and the instruction | A hook cannot tell that a feature is complete. The skill defines the rule: if the next piece, times 1.5 plus a wrap-up reserve, fits in what is left, keep working with no wrap-up; otherwise wrap up |
 | D8 | A handoff has a status (pending, consumed, discarded) and expires after 14 days | So an unrelated later session starts clean; one phrase from the user discards it |
@@ -41,3 +41,24 @@ Fixed format, produced by the wrap-up skill:
 2. Dependencies on Linux and Windows (the local scripts use `jq` and `osascript`).
 3. What the interactive terminal shows when a hook blocks; VS Code and Desktop behavior.
 4. How the wrap-up skill saves durable memory when the user has no memory feature enabled (it should skip that part and say so).
+
+## Build and test results (2026-11-06)
+
+Version 0.1.0 of the plugin is in `plugins/compaction-guard`. Hooks are POSIX shell and need only `sed`, `grep`, `tail`, `awk`, `date`, `cksum` and `find`. Windows without a POSIX shell is not supported yet.
+
+- `claude plugin validate` passes for the plugin and the marketplace. Warnings only: no author, no license (the directory requires one; the choice is the owner's), no icon.
+- `sh tests/run-tests.sh`: 43 of 43 pass (context size, window size, blocking and the ceiling, warnings, the handoff flow, the status line). The tests found one real bug, in the status line when it receives no data; fixed.
+- End to end with the real client, a temporary home and throwaway projects:
+  1. **Handoff.** A new session received a pending handoff by itself, opened with the one-line confirmation, quoted its next step and what was waiting on the user, and the handoff was archived.
+  2. **Wrap-up skill.** The skill wrote a handoff with every section, saved a memory entry, said what was not verified (the user's claim of passing tests was recorded as not re-run) and gave the three-part message.
+  3. **Real automatic compaction** with the window set to the 100,000 minimum: the attempt at 71% (71,295 tokens) was blocked, the attempt at 93% (93,403) was blocked, and the attempt at 115% (115,536) was allowed because it is above the 95% ceiling. The context then dropped to 50,368 and the session finished all six file reads, so it did not get stuck. The first run of this test did not reach compaction because the model stopped to ask a question; the instruction was made explicit and the test rerun, and that is the result reported.
+  4. **Warning to the assistant.** On the next message the assistant received the block notice and a context warning with the gate-check instruction.
+- Side effect found and cleaned: tests that run `claude` in a temporary project folder leave a folder for it under `~/.claude/projects`. They were removed by exact path.
+
+## Not tested
+
+- The plugin installed from a marketplace (the tests used `--plugin-dir`).
+- What the interactive terminal, VS Code and Desktop show on a block; Linux and Windows.
+- The 1,000,000-token window behavior of the ceiling on a real long session (the logic is covered by the unit tests; the live test used a 100,000 window).
+- The status line skill (written, not run).
+

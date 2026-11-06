@@ -1,0 +1,12 @@
+{
+  "name": "compaction-guard-marketplace",
+  "description": "Compaction Guard: control when Claude Code compacts a conversation",
+  "owner": { "name": "Francisco Felix" },
+  "plugins": [
+    {
+      "name": "compaction-guard",
+      "source": "./plugins/compaction-guard",
+      "description": "Blocks unchosen compaction, warns before the context fills, and hands work to a new session automatically."
+    }
+  ]
+}
