@@ -35,10 +35,10 @@ last=0
 case "$last" in ''|*[!0-9]*) last=0 ;; esac
 echo "$step" > "$STATE_DIR/$sid.step"
 
-gate="Gate check: at the end of the current piece of work, estimate the next piece from similar past pieces. If the estimate times 1.5 plus 30k tokens fits in what is left, keep working and do not wrap up. If it does not fit, or the next task is a clear boundary from this one, run the compaction-guard:wrap-up skill and tell the user, in three parts: why, what was saved, how to continue."
+gate="Gate check: at the end of the current piece of work, estimate the next piece from similar past pieces. If the estimate times 1.5 plus 30k tokens fits in what is left, keep working and do not wrap up. If it does not fit, or the next task is a clear boundary from this one, tell the user, in this form, and wait for their go: (1) why now, (2) what the wrap-up will save: the handoff, any lasting memory entries, and any stale documents you noticed (listed, not changed), (3) that they can answer yes or run /compaction-guard:wrap-up. Only after the go, run the compaction-guard:wrap-up skill."
 
 if [ "$pct" -ge "$ALERT_PCT" ]; then
-  echo "CONTEXT ALERT: $line Do not start new work. Run the wrap-up now. $gate"
+  echo "CONTEXT ALERT: $line Do not start new work. $gate"
 elif [ "$pct" -ge "$WARN_PCT" ]; then
   echo "CONTEXT WARNING: $line Do not start a new feature or phase before the gate check. $gate"
 elif [ "$step" -gt "$last" ]; then

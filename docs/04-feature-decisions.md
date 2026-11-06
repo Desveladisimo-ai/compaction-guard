@@ -16,7 +16,8 @@ Install in one step, work with defaults, no setup. Detection is automatic. When 
 | D4 | The status line is offered once and never forced | A plugin cannot set the main status line (only `agent` and `subagentStatusLine` take effect in plugin settings). Warnings work without it |
 | D5 | Install is one command | `/plugin install compaction-guard --marketplace <owner>/<repo>`, which the plugin validator reports as working in one step on Claude Code 2.1.275 or later; the older two-step form (`claude plugin marketplace add`, then `claude plugin install <name>@<marketplace>`) is documented. Hooks are active with defaults after install |
 | D6 | A new session finds the handoff itself | A SessionStart hook adds the pending handoff to the context on `startup` and `clear`; `/clear` counts as a new session. The assistant confirms in one line before acting |
-| D7 | The assistant decides "end of a feature, clear boundary" using the gate rule; the hook only supplies facts and the instruction | A hook cannot tell that a feature is complete. The skill defines the rule: if the next piece, times 1.5 plus a wrap-up reserve, fits in what is left, keep working with no wrap-up; otherwise wrap up |
+| D7 | Two steps, with the user's go in between. First the assistant shows why now, what the wrap-up will save (handoff, memory entries, stale documents it noticed, listed and not changed) and waits for a yes or for the user to run `/compaction-guard:wrap-up`; only then does it write. Added 2026-11-06 after the first build saved first and reported afterwards | Saving ends the session's work, so the user decides. |
+| D7a | The assistant decides "end of a feature, clear boundary" using the gate rule; the hook only supplies facts and the instruction | A hook cannot tell that a feature is complete. The skill defines the rule: if the next piece, times 1.5 plus a wrap-up reserve, fits in what is left, keep working with no wrap-up; otherwise wrap up |
 | D8 | A handoff has a status (pending, consumed, discarded) and expires after 14 days | So an unrelated later session starts clean; one phrase from the user discards it |
 
 ## The message the user sees when a move is advised
@@ -61,4 +62,8 @@ Version 0.1.0 of the plugin is in `plugins/compaction-guard`. Hooks are POSIX sh
 - What the interactive terminal, VS Code and Desktop show on a block; Linux and Windows.
 - The 1,000,000-token window behavior of the ceiling on a real long session (the logic is covered by the unit tests; the live test used a 100,000 window).
 - The status line skill (written, not run).
+
+### Two-step wrap-up, tested 2026-11-06 with the real client
+
+With a context alert in front of it and no go from the user, the assistant produced the three-part message (why now, what will be saved, the user's call), used no tools and wrote nothing. After the reply "yes" it ran the wrap-up skill, wrote the handoff and a memory entry, listed what it had not verified, and said it was safe to type `/clear` or open a new session. Note: the handoff also mentioned an item from the tester's own global instructions (a leftover check), so a handoff reflects the user's own rules as well as the plugin's.
 

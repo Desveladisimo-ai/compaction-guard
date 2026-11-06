@@ -1,11 +1,18 @@
 ---
 name: wrap-up
-description: Use when the context gate says to change session (the next piece of work does not fit in the room left, or a feature just ended at a clear boundary), or when the user asks to wrap up. Saves a handoff and durable notes so a new session continues by itself.
+description: Use when the context gate says to change session (the next piece of work does not fit in the room left, or a feature just ended at a clear boundary), or when the user asks to wrap up. First shows what it will save and waits for the go, then saves a handoff and durable notes so a new session continues by itself.
 ---
 
 # Wrap-up: save what must outlive this session
 
 Run this only when the gate check says to move, or when the user asks. If neither is true, say so in one sentence and stop; a wrap-up on every check wastes tokens.
+
+## 0. Get the go first
+
+Saving ends this session's work, so the user decides.
+
+- If the user just ran `/compaction-guard:wrap-up` or said yes to your proposal, that is the go. Continue to step 1.
+- Otherwise, do not write anything yet. Tell the user, briefly: (1) why now: what just finished, why the next task is a clear boundary or does not fit in the room left, the context size and the estimate for the next piece; (2) what you will save: the handoff (goal, state, decisions, next step, what waits on them), any lasting memory entries you will add, and any stale documents you noticed, listed and not changed. Then ask for the go, and stop.
 
 ## 1. Find where to write
 
@@ -66,10 +73,8 @@ If you have a persistent memory mechanism available, save the facts that will ma
 
 Do not edit code, documents or settings as part of the wrap-up. Stale documents go in the handoff under "Noticed but not changed".
 
-## 5. Tell the user, in three parts
+## 5. Tell the user it is safe to switch
 
-1. **Why now:** what just finished, why the next task is a clear boundary or does not fit, the context size and the estimate for the next piece.
-2. **What I saved:** the handoff path, and the memory entries if any.
-3. **How to continue:** "Type `/clear`, or open a new session. It will continue from the handoff on its own; you do not need to paste anything."
+Say, in two or three lines: what was saved (the handoff path, and the memory entries if any), and how to continue: "Type `/clear`, or open a new session. It will continue from the handoff on its own; you do not need to paste anything."
 
 Then stop. Do not start new work in this session.
