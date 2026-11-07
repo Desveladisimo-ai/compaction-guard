@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2034  # the settings below are used by the scripts that source this file
 # Shared helpers for the Compaction Guard hooks. POSIX sh. Needs only sed, grep,
 # tail, awk, date, cksum and find, which every macOS and Linux install has.
 

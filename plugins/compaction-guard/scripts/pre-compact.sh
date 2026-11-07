@@ -2,6 +2,7 @@
 # PreCompact hook. Blocks an automatic compaction (including idle compaction) while
 # there is room left, and lets it run above the ceiling so a session never ends up
 # stuck on a failed request. A manual /compact is always allowed.
+# shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
 INPUT=$(cat)
 trigger=$(printf '%s' "$INPUT" | json_str trigger)
@@ -14,6 +15,7 @@ if [ -z "$used" ] || [ -z "$sid" ]; then
   log_line "allowed: context size or session unknown"
   exit 0
 fi
+# shellcheck disable=SC2046  # splitting into WINDOW and SOURCE is intended
 set -- $(window_size "$sid" "$used")
 window=$1
 pct=$(( used * 100 / window ))

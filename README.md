@@ -43,3 +43,4 @@ Run the tests: `sh tests/run-tests.sh`. Validate: `claude plugin validate ./plug
 
 What it does with the defaults: blocks automatic compaction (including idle compaction) while the context is below 95% of the window; adds a line to the assistant's context at every 100k tokens, a warning at 70% and an alert at 85%, each with the gate-check instruction; and when the check says to change session, the wrap-up skill writes a handoff to `~/.claude/compaction-guard/handoffs/<project>/pending.md`, which the next session on that project receives by itself. Thresholds can be changed with the environment variables `COMPACTION_GUARD_WARN_PCT`, `COMPACTION_GUARD_ALERT_PCT`, `COMPACTION_GUARD_CEILING_PCT`, `COMPACTION_GUARD_STEP_TOKENS` and `COMPACTION_GUARD_HANDOFF_DAYS`.
 
+Check the shell scripts: `shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh` (clean as of 2026-11-07).

@@ -1,6 +1,7 @@
 #!/bin/sh
 # SessionStart hook (startup and clear). Adds a pending handoff for this project to
 # the context, once, so a new session continues where the last one stopped.
+# shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
 INPUT=$(cat)
 dir=$(printf '%s' "$INPUT" | json_str cwd)

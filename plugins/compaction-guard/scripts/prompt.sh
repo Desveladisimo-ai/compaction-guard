@@ -2,6 +2,7 @@
 # UserPromptSubmit hook. What this prints is added to the assistant's context.
 # Silent unless there is something to say: a block happened, a 100k step was
 # crossed, or the context reached the warning or alert level.
+# shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
 INPUT=$(cat)
 sid=$(printf '%s' "$INPUT" | json_str session_id)
@@ -9,6 +10,7 @@ transcript=$(printf '%s' "$INPUT" | json_str transcript_path)
 [ -n "$sid" ] || exit 0
 used=$(context_used "$transcript")
 [ -n "$used" ] || exit 0
+# shellcheck disable=SC2046  # splitting into WINDOW and SOURCE is intended
 set -- $(window_size "$sid" "$used")
 window=$1; source=$2
 pct=$(( used * 100 / window ))
@@ -21,6 +23,7 @@ line="Context: $pct% ($used of $window tokens, ${left}k left).$note"
 
 blocked="${STATE_DIR:?}/${sid:?}.blocked"
 if [ -r "$blocked" ]; then
+  # shellcheck disable=SC2046,SC2086  # splitting the record into its three fields is intended
   set -- $(cat "$blocked")
   rm -f "$blocked"
   echo "Compaction Guard blocked an automatic compaction at $1 ($2% of the window). The context is intact. $line"
