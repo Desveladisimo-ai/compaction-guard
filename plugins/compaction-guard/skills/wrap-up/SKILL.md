@@ -14,6 +14,10 @@ Saving ends this session's work, so the user decides.
 - If the user just ran `/compaction-guard:wrap-up` or said yes to your proposal, that is the go. Continue to step 1.
 - Otherwise, do not write anything yet. Tell the user, briefly: (1) why now: what just finished, why the next task is a clear boundary or does not fit in the room left, the context size and the estimate for the next piece; (2) what you will save: the handoff (goal, state, decisions, next step, what waits on them), any lasting memory entries you will add, and any stale documents you noticed, listed and not changed. Then ask for the go, and stop.
 
+## 0b. If there is nothing to hand over, say so and write nothing
+
+A handoff is for work that continues. If this session has no work worth continuing (no decisions, nothing half done, no concrete next step that is not already written in the project's own files), do not write a handoff. Tell the user in one or two lines: "Nothing to hand over: <why>. A new session starts clean." Do the memory step only if something lasting was learned. This matters because a thin handoff makes the next session start with an empty announcement.
+
 ## 1. Find where to write
 
 Run this command and use the path it prints:

@@ -38,7 +38,7 @@ if [ -n "$(find "$pending" -mtime +"$HANDOFF_MAX_DAYS" 2>/dev/null)" ]; then
 fi
 
 mkdir -p "$hdir/archive" 2>/dev/null
-echo "A previous session in this project wrapped up with the handoff below. Start your reply with one line, 'Continuing from the handoff: <goal in a few words>. Say stop if you want something else.', and then carry on from its 'Next step' without waiting for an answer. Only if the user's first message is clearly about something else, do not continue the handoff and ask once whether to discard it."
+echo "A previous session in this project left the handoff below. First decide whether it contains real work to continue: done items, decisions, or a concrete next step that is more than reading documents or asking the user what to do. If it does, start your reply with the line 'Continuing from the handoff: <goal in a few words>. Say stop if you want something else.' and carry on from its Next step without waiting for an answer. If it says no work was done, or its next step is only to read documents or ask the user, start your reply with the line 'The previous session left a handoff with nothing to continue.' and then carry on normally. In either case, if the user's first message is clearly about something else, do not continue the handoff and ask once whether to discard it."
 echo
 cat "$pending"
 archived="$hdir/archive/$(date -u +%Y%m%dT%H%M%SZ).md"
