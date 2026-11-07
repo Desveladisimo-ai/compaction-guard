@@ -1,0 +1,7 @@
+[
+  {
+    "name": "handoff-announce",
+    "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/announce-monitor.sh",
+    "description": "Starts a new session from a pending handoff without waiting for a message"
+  }
+]

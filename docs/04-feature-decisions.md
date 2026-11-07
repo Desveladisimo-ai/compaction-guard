@@ -67,3 +67,14 @@ Version 0.1.0 of the plugin is in `plugins/compaction-guard`. Hooks are POSIX sh
 
 With a context alert in front of it and no go from the user, the assistant produced the three-part message (why now, what will be saved, the user's call), used no tools and wrote nothing. After the reply "yes" it ran the wrap-up skill, wrote the handoff and a memory entry, listed what it had not verified, and said it was safe to type `/clear` or open a new session. Note: the handoff also mentioned an item from the tester's own global instructions (a leftover check), so a handoff reflects the user's own rules as well as the plugin's.
 
+## Starting a new session from the handoff immediately (experiment, 2026-11-07)
+
+Question: can a new session start from the handoff with no message from the user? Findings:
+- `initialUserMessage` (a SessionStart hook output) exists but the documentation limits it to non-interactive `-p` mode, so it cannot do it in the terminal.
+- A plugin **monitor** can. The docs describe a monitor as a background command started with the session, whose output "reaches Claude as notifications". Run in a real interactive session (a pseudo-terminal, nobody typing), a throwaway plugin whose monitor printed one line produced an assistant reply 8.7 seconds after the start. Each monitor event also ran the UserPromptSubmit hook.
+- Trap found: when a monitor process ends, Claude Code reports "stream ended" to the assistant and a pointless turn starts. So the monitor never ends; it polls once a second for the whole session.
+- Built in 0.1.1: the SessionStart hook leaves a marker when it loads a handoff; `scripts/announce-monitor.sh` (declared in `monitors/monitors.json`) prints one line when it sees the marker, which wakes the assistant, which announces the handoff and carries on from its Next step.
+- Tested in a real interactive session on Claude Code 2.1.319, macOS: (a) a pending handoff at session start: the assistant announced at 6.7 seconds and acted on the Next step with no input; (b) the exact flow, an idle session, a handoff appears, the user types `/clear`: the assistant announced 4.3 seconds later and acted, with no message from the user.
+
+Limits: interactive sessions only (monitors do not start with `-p`); the monitor runs with the user's full permissions outside the sandbox (documented), and this one only reads a marker file; VS Code, the desktop app, Linux and Windows are untested; on Bedrock, Vertex, Foundry or with telemetry off, monitors need Claude Code 2.1.310 or later (documented).
+

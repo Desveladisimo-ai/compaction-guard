@@ -14,6 +14,7 @@ ALERT_PCT="${COMPACTION_GUARD_ALERT_PCT:-85}"
 CEILING_PCT="${COMPACTION_GUARD_CEILING_PCT:-95}"
 HANDOFF_MAX_DAYS="${COMPACTION_GUARD_HANDOFF_DAYS:-14}"
 OFFER_MAX="${COMPACTION_GUARD_OFFER_MAX:-3}"
+MONITOR_WAIT="${COMPACTION_GUARD_MONITOR_WAIT:-15}"
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 
 # json_str KEY: first string value of KEY in the JSON on stdin ("" if absent).
@@ -91,5 +92,11 @@ log_line() {
 # gauge_installed: true when the user's settings already point at the gauge script.
 gauge_installed() {
   grep -q 'compaction-guard/statusline.sh' "$CLAUDE_DIR/settings.json" 2>/dev/null
+}
+
+# phys_key DIR: project_key of the physical path, so the hook and the monitor agree
+# even when one of them sees a symbolic link (for example /tmp and /private/tmp).
+phys_key() {
+  project_key "$(cd "$1" 2>/dev/null && pwd -P || echo "$1")"
 }
 

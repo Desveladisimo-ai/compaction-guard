@@ -41,6 +41,7 @@ mkdir -p "$hdir/archive" 2>/dev/null
 echo "A previous session in this project left the handoff below. First decide whether it contains real work to continue: done items, decisions, or a concrete next step that is more than reading documents or asking the user what to do. If it does, start your reply with the line 'Continuing from the handoff: <goal in a few words>. Say stop if you want something else.' and carry on from its Next step without waiting for an answer. If it says no work was done, or its next step is only to read documents or ask the user, start your reply with the line 'The previous session left a handoff with nothing to continue.' and then carry on normally. In either case, if the user's first message is clearly about something else, do not continue the handoff and ask once whether to discard it."
 echo
 cat "$pending"
+echo injected > "${STATE_DIR:?}/announce.$(phys_key "$dir")"
 archived="$hdir/archive/$(date -u +%Y%m%dT%H%M%SZ).md"
 mv "$pending" "$archived" 2>/dev/null && log_line "handoff injected and archived: $archived"
 exit 0

@@ -115,6 +115,19 @@ rm -f "$hdir/pending.md"
 mkdir -p "$GUARD_HOME/handoffs/other-1"; printf '# Handoff\nfor another project\n' > "$GUARD_HOME/handoffs/other-1/pending.md"
 out=$(hook_in ss5 "" startup | sh "$S/session-start.sh"); eq "another project's handoff is not injected" "" "$out"
 
+# ---- announce monitor --------------------------------------------------------
+export COMPACTION_GUARD_MONITOR_ONCE=1 COMPACTION_GUARD_MONITOR_WAIT=1
+rm -f "${STATE_DIR:?}"/announce.*
+out=$(cd "$T/proj" && sh "$S/announce-monitor.sh"); eq "monitor stays silent without a handoff" "" "$out"
+mkdir -p "$T/mproj"; mh="$GUARD_HOME/handoffs/$(project_key "$T/mproj")"; mkdir -p "$mh"
+printf '# Handoff\n## Goal\nx\n## Next step\ny\n' > "$mh/pending.md"
+printf '{"session_id":"m1","cwd":"%s"}' "$T/mproj" | sh "$S/session-start.sh" >/dev/null
+[ -n "$(ls "$STATE_DIR"/announce.* 2>/dev/null)" ] && ok "loading a handoff leaves an announce marker" || bad "loading a handoff leaves an announce marker" "no marker"
+out=$(cd "$T/mproj" && sh "$S/announce-monitor.sh"); check "monitor prints one line when a handoff was loaded" "handoff from the previous session is loaded" "$out"
+[ -z "$(ls "$STATE_DIR"/announce.* 2>/dev/null)" ] && ok "the marker is consumed" || bad "the marker is consumed" "still there"
+out=$(cd "$T/mproj" && sh "$S/announce-monitor.sh"); eq "the line is printed only once" "" "$out"
+unset COMPACTION_GUARD_MONITOR_ONCE COMPACTION_GUARD_MONITOR_WAIT
+
 # ---- handoff-path and status line ------------------------------------------------
 p=$(cd "$T/proj" && sh "$S/handoff-path.sh")
 check "handoff path is under the guard home" "$GUARD_HOME/handoffs/" "$p"
