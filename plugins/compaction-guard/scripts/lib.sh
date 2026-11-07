@@ -13,6 +13,8 @@ WARN_PCT="${COMPACTION_GUARD_WARN_PCT:-70}"
 ALERT_PCT="${COMPACTION_GUARD_ALERT_PCT:-85}"
 CEILING_PCT="${COMPACTION_GUARD_CEILING_PCT:-95}"
 HANDOFF_MAX_DAYS="${COMPACTION_GUARD_HANDOFF_DAYS:-14}"
+OFFER_MAX="${COMPACTION_GUARD_OFFER_MAX:-3}"
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 
 # json_str KEY: first string value of KEY in the JSON on stdin ("" if absent).
 json_str() {
@@ -85,3 +87,9 @@ log_line() {
   printf '%s %s\n' "$(date -u +%FT%TZ)" "$*" >> "$GUARD_HOME/guard.log" 2>/dev/null
   return 0
 }
+
+# gauge_installed: true when the user's settings already point at the gauge script.
+gauge_installed() {
+  grep -q 'compaction-guard/statusline.sh' "$CLAUDE_DIR/settings.json" 2>/dev/null
+}
+

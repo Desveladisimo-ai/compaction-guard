@@ -10,7 +10,7 @@ The gauge shows used and remaining tokens, for example `ctx 33%  333k/1000k  lef
 
 Do this:
 
-1. Explain in two sentences what it does, then ask the user whether to install it. Do nothing until they say yes.
+1. Explain in two sentences what it does, then ask the user whether to install it. Do nothing until they say yes. If they say no, run `mkdir -p ~/.claude/compaction-guard/state && echo declined > ~/.claude/compaction-guard/state/gauge-offer` so the offer stops, tell them they can run this command later, and stop.
 2. On yes, copy the script to a stable path and make it executable:
 
 ```
@@ -24,4 +24,4 @@ mkdir -p ~/.claude/compaction-guard && cp "${CLAUDE_PLUGIN_ROOT}/scripts/statusl
 ```
 
 4. If it already has a `statusLine`, do not replace it. Show the user the exact text to combine the two, and let them decide.
-5. Tell the user the gauge appears in new sessions, and how to remove it (delete the `statusLine` key).
+5. Run `echo done > ~/.claude/compaction-guard/state/gauge-offer`. Tell the user the gauge appears in new sessions, and how to remove it (delete the `statusLine` key).

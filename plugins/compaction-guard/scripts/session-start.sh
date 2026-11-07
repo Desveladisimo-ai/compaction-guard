@@ -8,10 +8,25 @@ dir=$(printf '%s' "$INPUT" | json_str cwd)
 [ -n "$dir" ] || dir="${CLAUDE_PROJECT_DIR:-$PWD}"
 mkdir -p "$STATE_DIR" 2>/dev/null
 
-if [ ! -e "$STATE_DIR/first-run" ]; then
-  date -u +%FT%TZ > "$STATE_DIR/first-run"
-  echo "Compaction Guard is active in this installation: automatic compaction is blocked while there is room left, the context is watched, and a wrap-up with a handoff is suggested when it is time to change session. Tell the user this once, in one or two sentences, and that /compaction-guard:status-line adds an optional context gauge."
+# Offer the optional gauge until the user installs it, declines it, or has seen the
+# offer three times. The count goes up only when the user sends a first message
+# (see prompt.sh), so a session that is opened and closed does not use it up.
+sid=$(printf '%s' "$INPUT" | json_str session_id)
+offer="$STATE_DIR/gauge-offer"
+if gauge_installed; then
+  echo "done" > "$offer"
 fi
+state=$(cat "$offer" 2>/dev/null)
+case "$state" in
+  done|declined) ;;
+  *)
+    case "$state" in ''|*[!0-9]*) state=0 ;; esac
+    if [ "$state" -lt "$OFFER_MAX" ] && [ -n "$sid" ]; then
+      echo "$sid" > "$STATE_DIR/gauge-offer.pending"
+      echo "Compaction Guard is active: automatic compaction is blocked while there is room left, the context is watched, and a wrap-up with a handoff is suggested when it is time to change session. Start your first reply with one short sentence telling the user this, and that /compaction-guard:status-line (optional, asks first) adds a context gauge and makes the warning levels exact. If they say they do not want it, run: echo declined > \"$offer\""
+    fi
+    ;;
+esac
 
 hdir="$GUARD_HOME/handoffs/$(project_key "$dir")"
 pending="$hdir/pending.md"

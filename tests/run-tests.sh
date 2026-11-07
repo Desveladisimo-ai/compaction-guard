@@ -80,8 +80,24 @@ printf '{"transcript_path":"%s"}' "$(transcript 150000)" | sh "$S/prompt.sh" >/d
 
 # ---- session start ---------------------------------------------------------------
 mkdir -p "$T/proj"
-out=$(hook_in ss1 "" startup | sh "$S/session-start.sh"); check "first run notice" "Compaction Guard is active" "$out"
-out=$(hook_in ss1 "" startup | sh "$S/session-start.sh"); eq "first run notice only once" "" "$out"
+export CLAUDE_CONFIG_DIR="$T/claude"; mkdir -p "$CLAUDE_CONFIG_DIR"
+out=$(hook_in o1 "" startup | sh "$S/session-start.sh"); check "gauge offer in the first session" "Start your first reply" "$out"
+check "the offer names the skill" "/compaction-guard:status-line" "$out"
+out=$(hook_in o2 "" startup | sh "$S/session-start.sh"); check "the offer repeats when no message was sent" "Start your first reply" "$out"
+hook_in o2 "" x | sh "$S/prompt.sh" >/dev/null
+eq "a first message counts one offer shown" 1 "$(cat "$STATE_DIR/gauge-offer")"
+hook_in o2 "" x | sh "$S/prompt.sh" >/dev/null
+eq "a second message in the same session counts nothing more" 1 "$(cat "$STATE_DIR/gauge-offer")"
+hook_in o3 "" startup | sh "$S/session-start.sh" >/dev/null; hook_in o3 "" x | sh "$S/prompt.sh" >/dev/null
+hook_in o4 "" startup | sh "$S/session-start.sh" >/dev/null; hook_in o4 "" x | sh "$S/prompt.sh" >/dev/null
+eq "three offers shown" 3 "$(cat "$STATE_DIR/gauge-offer")"
+out=$(hook_in o5 "" startup | sh "$S/session-start.sh"); absent "no fourth offer" "Start your first reply" "$out"
+rm -f "${STATE_DIR:?}/gauge-offer" "${STATE_DIR:?}/gauge-offer.pending"
+printf '{"statusLine":{"type":"command","command":"/x/.claude/compaction-guard/statusline.sh"}}' > "$CLAUDE_CONFIG_DIR/settings.json"
+out=$(hook_in o6 "" startup | sh "$S/session-start.sh"); absent "no offer when the gauge is already installed" "Start your first reply" "$out"
+eq "state becomes done" done "$(cat "$STATE_DIR/gauge-offer")"
+rm -f "${CLAUDE_CONFIG_DIR:?}/settings.json"; echo declined > "$STATE_DIR/gauge-offer"
+out=$(hook_in o7 "" startup | sh "$S/session-start.sh"); absent "no offer after the user declined" "Start your first reply" "$out"
 hdir="$GUARD_HOME/handoffs/$(project_key "$T/proj")"; mkdir -p "$hdir"
 printf '# Handoff\n## Goal\nFinish the report\n## Next step\nRun the tests\n' > "$hdir/pending.md"
 out=$(hook_in ss2 "" startup | sh "$S/session-start.sh")

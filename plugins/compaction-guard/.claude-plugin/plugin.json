@@ -1,7 +1,7 @@
 {
   "name": "compaction-guard",
   "displayName": "Compaction Guard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Stops Claude Code from compacting a conversation you did not choose to compact, warns before the context fills, and hands the work over to a new session automatically.",
   "author": { "name": "Francisco Felix" },
   "license": "MIT",
