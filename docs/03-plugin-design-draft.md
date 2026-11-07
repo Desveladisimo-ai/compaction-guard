@@ -51,3 +51,8 @@ Before installing anything, a person can set `"idleCompaction": false` in their 
 2. Build the plugin skeleton from `reference/` (hooks and a wrap-up skill), validate it, test it headless as before.
 3. Publish a marketplace repository and one article built from the timeline and incident drafts, after the owner approves every quote.
 4. Run the before/after measurement and update the article with the numbers.
+
+## Ideas, not decided
+
+- **Save lessons when they are learned.** A wrap-up saves at a boundary, but a correction of the form "X means Y" should be saved in the same turn it is given, or it dies with the session. A small instruction in the prompt hook, or a hook on the user's message that spots phrases like "I told you", "again" and "you forgot", could remind the assistant to write the memory entry before continuing. Not designed; not tested.
+
