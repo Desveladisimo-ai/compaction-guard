@@ -4,6 +4,9 @@
 # stuck on a failed request. A manual /compact is always allowed.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
+# Fail open: any unexpected error (a shell arithmetic failure exits with status 2, which
+# would block) ends as "allowed". Only the deliberate block below sets BLOCK.
+trap '[ "${BLOCK:-}" = 1 ] || exit 0' EXIT
 INPUT=$(cat)
 trigger=$(printf '%s' "$INPUT" | json_str trigger)
 [ "$trigger" = "manual" ] && exit 0
@@ -30,4 +33,5 @@ printf '%s %s %s\n' "$(date -u +%FT%TZ)" "$pct" "$used" > "$STATE_DIR/$sid.block
 log_line "blocked: automatic compaction at $pct% ($used of $window tokens, session $sid)"
 notify "Compaction Guard" "Blocked an automatic compaction at $pct%. Nothing was lost."
 echo "Compaction Guard blocked an automatic compaction at $pct% of the context window. The conversation is intact." >&2
+BLOCK=1
 exit 2

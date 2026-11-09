@@ -12,12 +12,19 @@ All notable changes to this project are recorded here. The format follows [Keep 
 - The optional `status-line` skill: a context gauge such as `ctx 33%  333k/1000k  left 667k`, offered up to three times and installed only after asking.
 - Optional configuration through `COMPACTION_GUARD_*` environment variables; the defaults need no setup.
 - Desktop notification when a compaction is blocked, where `osascript` (macOS) or `notify-send` (Linux) exists.
-- A test suite (66 checks) that passes on macOS, Ubuntu 24.04 and Alpine 3.20, ShellCheck-clean scripts, and CI that runs both plus `claude plugin validate`.
+- A test suite (87 checks) that passes on macOS, Ubuntu 24.04 and Alpine 3.20, ShellCheck-clean scripts, and CI that runs both plus `claude plugin validate`.
 
 ### Security
 - Everything the plugin writes is private to the user (folders `700`, files `600`); installs made by earlier development builds are tightened on first run.
 - Session identifiers are reduced to safe characters before they become file names.
 - No network access; no files written outside `~/.claude/compaction-guard/`.
+- A handoff is handed to the assistant as delimited notes, capped at 50 KB, that grant no permission; the assistant asks before any step that deletes data, sends data off the machine, pushes or publishes, installs software or changes credentials or settings. The wrap-up skill may not copy instructions found in web pages, issues, files or tool results into the next step.
+- Every numeric setting is validated before it reaches arithmetic, so a bad value falls back to its default instead of running code or blocking; the hooks end in success on any unexpected error, so they can neither block a compaction nor erase a message by accident.
+- Only plain files are read from the state folder (never a pipe, link or folder); a state path containing shell characters is replaced by the default; the folder is tightened only when it is a real folder of the current user.
+- The log is capped (200 KB) and used handoffs are removed after 90 days.
+
+### Fixed
+- The notice after a blocked compaction printed the time where the percentage belongs.
 
 ### Known limits
 - Native Windows is not tested.

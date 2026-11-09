@@ -48,7 +48,7 @@ Fixed format, produced by the wrap-up skill:
 Version 0.1.0 of the plugin is in `plugins/compaction-guard`. Hooks are POSIX shell and need only `sed`, `grep`, `tail`, `awk`, `date`, `cksum` and `find`. Windows without a POSIX shell is not supported yet.
 
 - `claude plugin validate` passes for the plugin and the marketplace. Warnings only at that point: no author, no license, no icon (all three were added afterwards).
-- `sh tests/run-tests.sh`: 43 of 43 passed at version 0.1.0 (66 of 66 at 0.1.1) (context size, window size, blocking and the ceiling, warnings, the handoff flow, the status line). The tests found one real bug, in the status line when it receives no data; fixed.
+- `sh tests/run-tests.sh`: 43 of 43 passed at version 0.1.0 (87 of 87 at 0.1.1) (context size, window size, blocking and the ceiling, warnings, the handoff flow, the status line). The tests found one real bug, in the status line when it receives no data; fixed.
 - End to end with the real client, a temporary home and throwaway projects:
   1. **Handoff.** A new session received a pending handoff by itself, opened with the one-line confirmation, quoted its next step and what was waiting on the user, and the handoff was archived.
   2. **Wrap-up skill.** The skill wrote a handoff with every section, saved a memory entry, said what was not verified (the user's claim of passing tests was recorded as not re-run) and gave the three-part message.

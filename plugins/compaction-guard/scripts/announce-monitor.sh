@@ -15,8 +15,8 @@ marker="${STATE_DIR:?}/announce.$key"
 # also later, when the user types /clear after a wrap-up in the same terminal.
 waited=0
 while :; do
-  if [ -r "$marker" ]; then
-    rm -f "$marker"
+  if regular_file "$marker"; then
+    rm -f "$marker" 2>/dev/null || exit 0
     echo "Compaction Guard: the handoff from the previous session is loaded. Announce it as your instructions say and carry on from its Next step."
     # Test hook: lets the unit tests end the process.
     [ -n "${COMPACTION_GUARD_MONITOR_ONCE:-}" ] && exit 0

@@ -4,6 +4,10 @@
 # crossed, or the context reached the warning or alert level.
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
+# This hook must never end with a failure status: exit 2 would block and erase the user's
+# message. Any unexpected error ends as success.
+trap 'exit 0' EXIT
+set -f
 INPUT=$(cat)
 sid=$(safe_id "$(printf '%s' "$INPUT" | json_str session_id)")
 transcript=$(printf '%s' "$INPUT" | json_str transcript_path)
@@ -11,7 +15,7 @@ transcript=$(printf '%s' "$INPUT" | json_str transcript_path)
 
 # The first message of a session that was offered the gauge counts as one offer shown.
 pending="$STATE_DIR/gauge-offer.pending"
-if [ -r "$pending" ] && [ "$(cat "$pending")" = "$sid" ]; then
+if regular_file "$pending" && [ "$(cat "$pending")" = "$sid" ]; then
   shown=$(cat "$STATE_DIR/gauge-offer" 2>/dev/null)
   case "$shown" in ''|*[!0-9]*) shown=0 ;; esac
   echo $(( shown + 1 )) > "$STATE_DIR/gauge-offer"
@@ -32,11 +36,11 @@ note=""
 line="Context: $pct% ($used of $window tokens, ${left}k left).$note"
 
 blocked="${STATE_DIR:?}/${sid:?}.blocked"
-if [ -r "$blocked" ]; then
+if regular_file "$blocked"; then
   # shellcheck disable=SC2046,SC2086  # splitting the record into its three fields is intended
   set -- $(cat "$blocked")
   rm -f "$blocked"
-  echo "Compaction Guard blocked an automatic compaction at $1 ($2% of the window). The context is intact. $line"
+  echo "Compaction Guard blocked an automatic compaction at $2% of the window (at $1). The context is intact. $line"
   if [ "$pct" -lt "$WARN_PCT" ]; then
     echo "No wrap-up is needed unless the gate check says to move."
   fi
@@ -44,7 +48,7 @@ fi
 
 step=$(( used / STEP_TOKENS ))
 last=0
-[ -r "$STATE_DIR/$sid.step" ] && last=$(cat "$STATE_DIR/$sid.step")
+regular_file "$STATE_DIR/$sid.step" && last=$(cat "$STATE_DIR/$sid.step")
 case "$last" in ''|*[!0-9]*) last=0 ;; esac
 echo "$step" > "$STATE_DIR/$sid.step"
 

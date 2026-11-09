@@ -35,7 +35,7 @@ Start a new Claude Code session afterwards. That is all: it works with its defau
 
 With the defaults:
 
-- **Saves your place and picks it up in the next session, for you.** When the check says it is time to change session, the `wrap-up` skill shows what it will save and waits for your go. It then writes a *handoff*, a short note with the goal, the state, the decisions and the next step. You never write, copy or load one: the next session in that project finds it, announces it in one line and carries on from its next step, with no message from you (interactive sessions only). The only thing you decide is when to change session.
+- **Saves your place and picks it up in the next session, for you.** When the check says it is time to change session, the `wrap-up` skill shows what it will save and waits for your go. It then writes a *handoff*, a short note with the goal, the state, the decisions and the next step. You never write, copy or load one: the next session in that project finds it, announces it in one line and carries on from its next step, with no message from you (interactive sessions only). The only thing you decide is when to change session. A handoff is handed over as notes, not as instructions: the assistant does not carry on by itself with a step that deletes data, sends data off your machine, pushes or publishes, installs software or changes credentials or settings. It names the step and asks first.
 - **Blocks automatic compaction** (including idle compaction) while the context is below 95% of the window. Manual `/compact` is never blocked.
 - **Tells the assistant where the context stands**: a line at every 100k tokens, a warning at 70% and an alert at 85%, each with an instruction to check whether the next piece of work still fits.
 - **Optional gauge.** The `status-line` skill adds a line such as `ctx 33%  333k/1000k  left 667k` to your status line, after asking. The plugin works without it.
@@ -107,7 +107,7 @@ The plugin saves and picks up handoffs by itself, so there is nothing for you to
 ## Development
 
 ```
-sh tests/run-tests.sh                                              # 66 checks
+sh tests/run-tests.sh                                              # 87 checks
 shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh
 claude plugin validate ./plugins/compaction-guard
 claude plugin validate .
