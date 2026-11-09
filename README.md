@@ -18,7 +18,9 @@
   <a href="#uninstall">Uninstall</a>
 </p>
 
-Claude Code compacts a long conversation automatically, replacing it with a summary, and since October 2026 it can also do so after you have been idle. Whatever the summary leaves out is gone, so work can be re-read, repeated or done wrong afterwards. **Compaction Guard makes compaction a decision you take**: it blocks automatic compaction while there is room, shows you and the assistant where the context stands, and hands the work to a fresh session when it is really time to change.
+Claude Code compacts a long conversation automatically, replacing it with a summary, and since October 2026 it can also do so after you have been idle. Whatever the summary leaves out is gone, so work can be re-read, repeated or done wrong afterwards.
+
+**Compaction Guard keeps your place, automatically.** When it is time to change session, it writes a short handoff note (you say yes once), and the next session picks it up by itself: type `/clear` or open a new session, and the assistant tells you where you were and carries on from the next step, with no message from you (interactive sessions). Until the context is nearly full, it also blocks Claude Code's automatic compaction, so nothing is summarized away behind your back, and it warns you and the assistant at 70% and 85% so you choose when to change.
 
 ## Install
 
@@ -33,9 +35,9 @@ Start a new Claude Code session afterwards. That is all: it works with its defau
 
 With the defaults:
 
+- **Saves your place and picks it up in the next session, for you.** When the check says it is time to change session, the `wrap-up` skill shows what it will save and waits for your go. It then writes a *handoff*, a short note with the goal, the state, the decisions and the next step. You never write, copy or load one: the next session in that project finds it, announces it in one line and carries on from its next step, with no message from you (interactive sessions only). The only thing you decide is when to change session; nothing is lost either way.
 - **Blocks automatic compaction** (including idle compaction) while the context is below 95% of the window. Manual `/compact` is never blocked.
 - **Tells the assistant where the context stands**: a line at every 100k tokens, a warning at 70% and an alert at 85%, each with an instruction to check whether the next piece of work still fits.
-- **Saves your place and picks it up in the next session, for you.** When the check says it is time to change session, the `wrap-up` skill shows what it will save and waits for your go. It then writes a *handoff*, a short note with the goal, the state, the decisions and the next step. You never write, copy or load one: the next session in that project finds it, announces it in one line and carries on from its next step, with no message from you (interactive sessions only). The only thing you decide is when to change session; nothing is lost either way.
 - **Optional gauge.** The `status-line` skill adds a line such as `ctx 33%  333k/1000k  left 667k` to your status line, after asking. The plugin works without it.
 
 ### You decide, with a safety net
