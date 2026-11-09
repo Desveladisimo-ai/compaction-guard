@@ -31,7 +31,13 @@ Measured on macOS, 100 runs each, with a 422 KB transcript (the hooks read only 
 The monitor sleeps one second between checks and reads one file path.
 
 ## Branch protection and repository settings
-Recorded in the repository settings and verified at release; see [SECURITY.md](../SECURITY.md) and the release notes.
+Verified through the GitHub API on 2026-11-09:
+
+- **`main` is protected.** A pull request is required (zero approvals, because there is a single maintainer), the five checks above must pass and be up to date, history is linear, force pushes and deletions are refused, and conversations must be resolved. Administrators are not forced through these rules, so the maintainer can bypass them; contributors cannot.
+- **Secret scanning and push protection are on**, in addition to the CI scan of the history.
+- **Dependabot alerts and security updates are on**; version updates for the workflow actions come from `dependabot.yml`.
+- **The default workflow token is read-only**, and workflows cannot approve pull requests.
+- **Private vulnerability reporting** is not available while the repository is private (the API returns 404); it is switched on when the repository is made public.
 
 ## Audits
 See [the security audit](security/audit-2026-11-09.md) and [the threat model](security/threat-model.md).
