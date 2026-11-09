@@ -38,6 +38,10 @@ With the defaults:
 - **Saves your place and picks it up in the next session, for you.** When the check says it is time to change session, the `wrap-up` skill shows what it will save and waits for your go. It then writes a *handoff*, a short note with the goal, the state, the decisions and the next step. You never write, copy or load one: the next session in that project finds it, announces it in one line and carries on from its next step, with no message from you (interactive sessions only). The only thing you decide is when to change session; nothing is lost either way.
 - **Optional gauge.** The `status-line` skill adds a line such as `ctx 33%  333k/1000k  left 667k` to your status line, after asking. The plugin works without it.
 
+### You decide, with a safety net
+
+Nothing is saved or ended without your go, and nothing is compacted behind your back while there is room. If you never decide, the plugin does not hold the line forever: at the ceiling (95% of the window by default) it steps aside and lets Claude Code compact, because blocking a compaction that Claude Code needs in order to keep working would make the next request fail. The warnings at 70% and 85% exist so you decide before that point.
+
 ### Is this better than the built-in switches?
 
 Not always. If you only want automatic compaction off, Claude Code has simpler options: `"idleCompaction": false` for the idle case, and `autoCompactEnabled: false` or the `DISABLE_AUTO_COMPACT=1` environment variable for all of it. In our test with auto-compact off and a small window, the context kept growing with no warning at all. What this plugin adds over the switches is the visible gauge, a warning the assistant itself sees, a rule for when to change session, and the wrap-up and handoff procedure.
