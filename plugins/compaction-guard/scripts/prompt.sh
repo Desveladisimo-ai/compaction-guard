@@ -5,7 +5,7 @@
 # shellcheck source=lib.sh
 . "$(dirname "$0")/lib.sh"
 INPUT=$(cat)
-sid=$(printf '%s' "$INPUT" | json_str session_id)
+sid=$(safe_id "$(printf '%s' "$INPUT" | json_str session_id)")
 transcript=$(printf '%s' "$INPUT" | json_str transcript_path)
 [ -n "$sid" ] || exit 0
 

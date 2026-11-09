@@ -137,5 +137,23 @@ eq "status line gauge" "ctx 33%  333k/1000k  left 666k" "$sl"
 eq "status line records the window" 1000000 "$(cat "$STATE_DIR/sl1.window")"
 sl=$(printf '{"session_id":"sl2"}' | sh "$S/statusline.sh"); eq "status line without data" "ctx n/a" "$sl"
 
+# ---- privacy and identifiers -------------------------------------------------------
+mode() { ls -ld "$1" | cut -c1-10; }
+rm -rf "$T/home"
+hook_in priv1 "$(transcript 150000)" auto | sh "$S/pre-compact.sh" >/dev/null 2>&1
+eq "state folder is private to the user" "drwx------" "$(mode "$T/home/state")"
+eq "state files are private to the user" "-rw-------" "$(mode "$T/home/state/priv1.blocked")"
+sh "$S/handoff-path.sh" >/dev/null
+eq "handoff folder is private to the user" "drwx------" "$(mode "$(find "$T/home/handoffs" -mindepth 1 -maxdepth 1 -type d | head -n 1)")"
+# an install made by an earlier version (default umask) is tightened once
+mkdir -p "$T/old/state"; chmod 755 "$T/old" "$T/old/state"; echo x > "$T/old/state/f"; chmod 644 "$T/old/state/f"
+COMPACTION_GUARD_HOME="$T/old" sh -c '. "$1"' sh "$S/lib.sh"
+eq "older install: folder tightened" "drwx------" "$(mode "$T/old/state")"
+eq "older install: file tightened" "-rw-------" "$(mode "$T/old/state/f")"
+# a session id can never form a path
+hook_in "../../escape" "$(transcript 150000)" auto | sh "$S/pre-compact.sh" >/dev/null 2>&1
+[ -e "$T/escape.blocked" ] || [ -e "$T/../escape.blocked" ] && bad "session id stays inside the state folder" "file written outside" || ok "session id stays inside the state folder"
+[ -f "$T/home/state/.._.._escape.blocked" ] && ok "session id is sanitized into one file name" || bad "session id is sanitized into one file name" "$(ls "$T/home/state")"
+
 echo; echo "$PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]

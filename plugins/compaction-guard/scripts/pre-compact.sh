@@ -7,7 +7,7 @@
 INPUT=$(cat)
 trigger=$(printf '%s' "$INPUT" | json_str trigger)
 [ "$trigger" = "manual" ] && exit 0
-sid=$(printf '%s' "$INPUT" | json_str session_id)
+sid=$(safe_id "$(printf '%s' "$INPUT" | json_str session_id)")
 transcript=$(printf '%s' "$INPUT" | json_str transcript_path)
 
 used=$(context_used "$transcript")

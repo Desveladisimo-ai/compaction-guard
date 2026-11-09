@@ -7,6 +7,20 @@
 GUARD_HOME="${COMPACTION_GUARD_HOME:-$HOME/.claude/compaction-guard}"
 STATE_DIR="$GUARD_HOME/state"
 
+# Everything the plugin writes is private to the user: handoffs hold what was worked on
+# and are read back into the assistant's context, so nobody else may read or change them.
+umask 077
+# Tighten a folder created by an earlier version (default umask), once.
+if [ -d "$GUARD_HOME" ] && [ ! -f "$GUARD_HOME/.private" ]; then
+  chmod -R go-rwx "$GUARD_HOME" 2>/dev/null && : > "$GUARD_HOME/.private"
+fi
+
+# safe_id VALUE: VALUE reduced to letters, digits, dot, dash and underscore, so an
+# identifier from outside can never form a path.
+safe_id() {
+  printf '%s' "$1" | tr -c 'A-Za-z0-9._-' '_'
+}
+
 # Thresholds, in percent of the context window. Override with environment variables.
 STEP_TOKENS="${COMPACTION_GUARD_STEP_TOKENS:-100000}"
 WARN_PCT="${COMPACTION_GUARD_WARN_PCT:-70}"

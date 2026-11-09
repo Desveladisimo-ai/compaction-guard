@@ -54,9 +54,9 @@ Everything is plain shell scripts in [`plugins/compaction-guard/scripts`](plugin
 | `handoff-announce` monitor | The whole session | Checks once a second whether a handoff was just loaded, and if so wakes the assistant to announce it. This is the "1 monitor" Claude Code shows in its status bar |
 | `wrap-up` and `status-line` skills | Only when run | Write the handoff, or show the status line setting. Neither edits your settings without your yes |
 
-Files it writes, all under `~/.claude/compaction-guard/` (or `$COMPACTION_GUARD_HOME`): `state/` (flags and counters), `handoffs/<project>/` (pending and archived handoffs) and `guard.log`. Handoffs older than 14 days are ignored. Handoffs are written by the assistant, so read one before you share it: it can contain what you worked on.
+Files it writes, all under `~/.claude/compaction-guard/` (or `$COMPACTION_GUARD_HOME`): `state/` (flags and counters), `handoffs/<project>/` (pending and archived handoffs) and `guard.log`. Everything is created readable and writable by your user only (folders `700`, files `600`), including on installs made by an earlier version, which are tightened on first run. Handoffs older than 14 days are ignored. Handoffs are written by the assistant, so read one before you share it: it can contain what you worked on.
 
-Plugin monitors run with your user's permissions, outside Claude Code's sandbox (Claude Code documents this). This one only reads and deletes a small marker file under `state/` and prints one line; you can read it in [`announce-monitor.sh`](plugins/compaction-guard/scripts/announce-monitor.sh).
+Like every Claude Code plugin hook and monitor, these scripts run as your user; Claude Code decides that, not the plugin. This plugin asks for nothing beyond that: no network, no files outside `~/.claude/compaction-guard/`, and session identifiers are reduced to safe characters before they become file names. The monitor only reads and deletes a small marker file under `state/` and prints one line; you can read it in [`announce-monitor.sh`](plugins/compaction-guard/scripts/announce-monitor.sh).
 
 ## Optional configuration
 
@@ -101,7 +101,7 @@ Your handoffs and state stay in `~/.claude/compaction-guard/` until you delete t
 ## Development
 
 ```
-sh tests/run-tests.sh                                              # 59 checks
+sh tests/run-tests.sh                                              # 66 checks
 shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh
 claude plugin validate ./plugins/compaction-guard
 claude plugin validate .

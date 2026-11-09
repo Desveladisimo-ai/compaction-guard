@@ -11,7 +11,7 @@ mkdir -p "$STATE_DIR" 2>/dev/null
 # Offer the optional gauge until the user installs it, declines it, or has seen the
 # offer three times. The count goes up only when the user sends a first message
 # (see prompt.sh), so a session that is opened and closed does not use it up.
-sid=$(printf '%s' "$INPUT" | json_str session_id)
+sid=$(safe_id "$(printf '%s' "$INPUT" | json_str session_id)")
 offer="$STATE_DIR/gauge-offer"
 if gauge_installed; then
   echo "done" > "$offer"
