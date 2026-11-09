@@ -13,7 +13,7 @@
   <a href="#install">Install</a> •
   <a href="#what-it-does">What it does</a> •
   <a href="#what-runs-on-your-machine">What runs on your machine</a> •
-  <a href="#configuration">Configuration</a> •
+  <a href="#optional-configuration">Optional configuration</a> •
   <a href="#limits">Limits</a> •
   <a href="#uninstall">Uninstall</a>
 </p>
@@ -27,7 +27,7 @@ claude plugin marketplace add Desveladisimo-ai/compaction-guard
 claude plugin install compaction-guard@compaction-guard-marketplace
 ```
 
-Start a new Claude Code session afterwards. Requirements: Claude Code, and a POSIX shell with `sed`, `grep`, `awk`, `date`, `cksum` and `find`, which macOS and Linux have by default. Native Windows is not tested.
+Start a new Claude Code session afterwards. That is all: it works with its defaults, with no setup. Requirements: Claude Code, and a POSIX shell with `sed`, `grep`, `awk`, `date`, `cksum` and `find`, which macOS and Linux have by default. Native Windows is not tested.
 
 ## What it does
 
@@ -56,9 +56,9 @@ Everything is plain shell scripts in [`plugins/compaction-guard/scripts`](plugin
 
 Files it writes, all under `~/.claude/compaction-guard/` (or `$COMPACTION_GUARD_HOME`): `state/` (flags and counters), `handoffs/<project>/` (pending and archived handoffs) and `guard.log`. Handoffs older than 14 days are ignored. Handoffs are written by the assistant, so read one before you share it: it can contain what you worked on.
 
-## Configuration
+## Optional configuration
 
-Set these environment variables to change the defaults:
+Nothing here is required. The defaults above work out of the box, and most people never touch these. If you want different thresholds, export any of these environment variables (for example in your shell profile) before starting Claude Code:
 
 | Variable | Default | Meaning |
 |---|---|---|
