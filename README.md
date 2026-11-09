@@ -101,19 +101,22 @@ The plugin saves and picks up handoffs by itself, so there is nothing for you to
 
 - [Timeline](docs/timeline.md): what changed in Claude Code's compaction and when, with sources.
 - [Design](docs/design.md): why a plugin and not a skill, what a plugin can and cannot do.
-- [Decisions](docs/decisions.md): each design decision, what was verified and what was tested.
+- [Architecture decision records](docs/adr/README.md): each decision, why it was taken and how it was verified.
+- [Threat model](docs/security/threat-model.md) and [security audit](docs/security/audit-2026-11-09.md): what is trusted, what was found and fixed, with a regression test for each finding.
+- [Quality gates](docs/quality-gates.md): what every change must pass, how to run it locally, and measured hook latency.
+- [Verification log](docs/decisions.md): verified facts about Claude Code's hooks and the dated test results.
 - [Sources](docs/sources.md): every source, with its retrieval date.
 
 ## Development
 
 ```
-sh tests/run-tests.sh                                              # 87 checks
+sh tests/run-tests.sh                                              # 90 checks
 shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh
 claude plugin validate ./plugins/compaction-guard
 claude plugin validate .
 ```
 
-CI runs all of this on every push. See [CONTRIBUTING.md](CONTRIBUTING.md).
+CI runs all of this on every push, plus a secret scan of the whole history. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [quality gates](docs/quality-gates.md).
 
 ## License
 

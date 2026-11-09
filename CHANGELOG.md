@@ -12,7 +12,7 @@ All notable changes to this project are recorded here. The format follows [Keep 
 - The optional `status-line` skill: a context gauge such as `ctx 33%  333k/1000k  left 667k`, offered up to three times and installed only after asking.
 - Optional configuration through `COMPACTION_GUARD_*` environment variables; the defaults need no setup.
 - Desktop notification when a compaction is blocked, where `osascript` (macOS) or `notify-send` (Linux) exists.
-- A test suite (87 checks) that passes on macOS, Ubuntu 24.04 and Alpine 3.20, ShellCheck-clean scripts, and CI that runs both plus `claude plugin validate`.
+- A test suite (90 checks) that passes on macOS, Ubuntu 24.04 and Alpine 3.20, ShellCheck-clean scripts, and CI that runs both plus `claude plugin validate`.
 
 ### Security
 - Everything the plugin writes is private to the user (folders `700`, files `600`); installs made by earlier development builds are tightened on first run.
@@ -25,6 +25,10 @@ All notable changes to this project are recorded here. The format follows [Keep 
 
 ### Fixed
 - The notice after a blocked compaction printed the time where the percentage belongs.
+
+### Documentation and gates
+- Ten architecture decision records, a threat model and a pre-release security audit record (findings, fixes and the regression test for each).
+- CI gates: tests on Ubuntu and macOS, ShellCheck, a secret scan of the full history, plugin and marketplace validation, and policy tests that fail the build on a network call, `eval` or privilege escalation. Actions are pinned to commit SHAs and updated by Dependabot.
 
 ### Known limits
 - Native Windows is not tested.

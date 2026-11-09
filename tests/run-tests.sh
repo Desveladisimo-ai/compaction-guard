@@ -208,5 +208,15 @@ head -c 300000 /dev/zero | tr '\0' 'x' | sed 's/\(.\{80\}\)/\1\n/g' > "$T/hard/g
 . "$S/lib.sh"; log_line "rotation check"
 [ "$(wc -c < "$T/hard/guard.log" | tr -d ' ')" -lt 100000 ] && ok "the log is cut when it grows past 200 KB" || bad "the log is cut when it grows past 200 KB" "$(wc -c < "$T/hard/guard.log")"
 
+# ---- policy: what the scripts must never contain ------------------------------------
+# These fail the build if a change adds a network call, a dynamic eval or a shell-out
+# to an interpreter, so the "no network, no eval" statements in the README stay true.
+net=$(grep -n -E '(^|[^A-Za-z_-])(curl|wget|nc|ncat|socat|ssh|scp|sftp|telnet|ftp)( |$)|/dev/(tcp|udp)/' "$S"/*.sh | grep -v '^[^:]*:[0-9]*:[[:space:]]*#' )
+eq "scripts make no network calls" "" "$net"
+ev=$(grep -n -E '(^|[;&|[:space:]])eval[[:space:]]' "$S"/*.sh | grep -v '^[^:]*:[0-9]*:[[:space:]]*#')
+eq "scripts never use eval" "" "$ev"
+sudo_use=$(grep -n -E '(^|[^A-Za-z_-])(sudo|su|doas)( |$)' "$S"/*.sh | grep -v '^[^:]*:[0-9]*:[[:space:]]*#')
+eq "scripts never escalate privileges" "" "$sudo_use"
+
 echo; echo "$PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]

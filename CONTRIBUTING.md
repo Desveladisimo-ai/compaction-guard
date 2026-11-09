@@ -13,7 +13,9 @@ Thanks for helping. This is a small plugin made of POSIX shell scripts; keeping 
    ```
 2. Add or update a test in `tests/run-tests.sh` for any behavior you change.
 3. Keep scripts POSIX `sh` (no bashisms). Test on Linux if you can; `docker run --rm -v "$PWD":/r:ro alpine:3.20 sh -c 'cp -R /r /w && cd /w && sh tests/run-tests.sh'` is enough.
-4. Describe what you observed, not what you expect. A claim in the README or the docs is either something you ran, a linked source, or marked "not verified".
+4. If your change is a design decision (a new default, a new trust assumption, a new file the plugin writes), add a record under `docs/adr/` from `docs/adr/template.md`.
+5. The build fails if a script gains a network call, an `eval` or a privilege escalation; if you have a good reason, say so in the pull request and update the policy test with it.
+6. Describe what you observed, not what you expect. A claim in the README or the docs is either something you ran, a linked source, or marked "not verified".
 
 ## Reporting a bug
 
