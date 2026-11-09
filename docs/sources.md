@@ -14,7 +14,7 @@ Retrieved 2026-11-06 unless stated. "Observed" means produced by a command in th
 | S8 | Plugin manifest reference, https://code.claude.com/docs/en/plugins-reference.md | what a plugin can contain, layout, reserved names, plugin `settings` limits |
 | S9 | Create a marketplace, https://code.claude.com/docs/en/plugin-marketplaces.md | how people install a plugin from a git repository |
 | S10 | Public issue tracker, https://github.com/anthropics/claude-code/issues, search `in:title compact created:>=2026-10-14` (GitHub search API) | 90 issues with "compact" in the title since idle compaction shipped; individual reports, not verified |
-| S11 | The owner's session transcript of 2026-10-30 to 2026-11-06 (compact boundary records: trigger, tokens before and after, duration) | measured compactions |
-| S12 | The owner's hook logs (`compact-blocked` flag files) of 2026-11-03 | the gate blocking idle compaction |
+| S11 | The maintainer's session transcript of 2026-10-30 to 2026-11-06 (compact boundary records: trigger, tokens before and after, duration) | measured compactions |
+| S12 | The maintainer's hook logs (`compact-blocked` flag files) of 2026-11-03 | the gate blocking idle compaction |
 
 Not used and not verified: any claim about why the behavior was chosen beyond what the changelog states; any cost figure for rework (not measured).

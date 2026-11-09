@@ -1,6 +1,6 @@
-# What changed, and when (draft)
+# What changed, and when
 
-Status: draft for review. Every row cites a source from `sources.md`. Changelog entries are paraphrased; open the linked file at the version to read the original.
+Sources retrieved 2026-11-06. Every row cites a source from [`sources.md`](sources.md). Changelog entries are paraphrased; open the linked file at the version to read the original.
 
 ## The short version
 
@@ -37,7 +37,7 @@ The date of the first public mention differs by a few hours between the npm publ
 ## What this does not show
 
 - It does not show why the default was chosen beyond the stated reason, which is avoiding a full reprocessing when the prompt cache has expired. A cost reason is documented; nothing in the sources speaks to intent beyond that.
-- It does not show a warning before an idle compaction. The changelog describes a notice after it (2.1.302). Whether any client shows a warning before, I did not find; not verified.
+- It does not show a warning before an idle compaction. The changelog describes a notice after it (2.1.302). Whether any client shows a warning before was not found in the sources; not verified.
 - It does not quantify how many people were affected. The public issue tracker has 90 issues since 2026-10-14 with "compact" in the title (S10); they are individual reports and were not verified one by one.
 
 ## The argument that the sources support

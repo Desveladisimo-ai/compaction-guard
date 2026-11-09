@@ -1,6 +1,6 @@
 # Feature decisions (2026-11-06)
 
-Taken with the owner after the design discussion. Each decision names its source or says it is a product choice.
+Taken by the maintainer after the design discussion. Each decision names its source or says it is a product choice.
 
 ## Goal
 
@@ -39,7 +39,7 @@ Fixed format, produced by the wrap-up skill:
 ## Not verified, to settle before building
 
 1. **Window size without a status line.** The transcript gives tokens used, not the window. A 200K window and a 1M window need different percentages. Plan: use the status line value when it exists, then the auto-compact window setting or variable when set, then a small table by model, and let the user override with an option. A wrong guess would warn too early or too late, so this needs a test.
-2. Dependencies on Linux and Windows (the local scripts use `jq` and `osascript`).
+2. Dependencies on Linux and Windows (the first local scripts used `jq` and `osascript`). Settled afterwards: POSIX shell without `jq`, tested on Ubuntu and Alpine on 2026-11-09; Windows is still untested.
 3. What the interactive terminal shows when a hook blocks; VS Code and Desktop behavior.
 4. How the wrap-up skill saves durable memory when the user has no memory feature enabled (it should skip that part and say so).
 
@@ -47,8 +47,8 @@ Fixed format, produced by the wrap-up skill:
 
 Version 0.1.0 of the plugin is in `plugins/compaction-guard`. Hooks are POSIX shell and need only `sed`, `grep`, `tail`, `awk`, `date`, `cksum` and `find`. Windows without a POSIX shell is not supported yet.
 
-- `claude plugin validate` passes for the plugin and the marketplace. Warnings only: no author, no license (the directory requires one; the choice is the owner's), no icon.
-- `sh tests/run-tests.sh`: 43 of 43 pass (context size, window size, blocking and the ceiling, warnings, the handoff flow, the status line). The tests found one real bug, in the status line when it receives no data; fixed.
+- `claude plugin validate` passes for the plugin and the marketplace. Warnings only at that point: no author, no license, no icon (all three were added afterwards).
+- `sh tests/run-tests.sh`: 43 of 43 passed at version 0.1.0 (59 of 59 at 0.1.1) (context size, window size, blocking and the ceiling, warnings, the handoff flow, the status line). The tests found one real bug, in the status line when it receives no data; fixed.
 - End to end with the real client, a temporary home and throwaway projects:
   1. **Handoff.** A new session received a pending handoff by itself, opened with the one-line confirmation, quoted its next step and what was waiting on the user, and the handoff was archived.
   2. **Wrap-up skill.** The skill wrote a handoff with every section, saved a memory entry, said what was not verified (the user's claim of passing tests was recorded as not re-run) and gave the three-part message.
@@ -65,7 +65,7 @@ Version 0.1.0 of the plugin is in `plugins/compaction-guard`. Hooks are POSIX sh
 
 ### Two-step wrap-up, tested 2026-11-06 with the real client
 
-With a context alert in front of it and no go from the user, the assistant produced the three-part message (why now, what will be saved, the user's call), used no tools and wrote nothing. After the reply "yes" it ran the wrap-up skill, wrote the handoff and a memory entry, listed what it had not verified, and said it was safe to type `/clear` or open a new session. Note: the handoff also mentioned an item from the tester's own global instructions (a leftover check), so a handoff reflects the user's own rules as well as the plugin's.
+With a context alert in front of it and no go from the user, the assistant produced the three-part message (why now, what will be saved, the user's call), used no tools and wrote nothing. After the reply "yes" it ran the wrap-up skill, wrote the handoff and a memory entry, listed what it had not verified, and said it was safe to type `/clear` or open a new session. Note: the handoff also reflected the tester's own global instructions, so a handoff carries the user's own rules as well as the plugin's.
 
 ## Starting a new session from the handoff immediately (experiment, 2026-11-07)
 

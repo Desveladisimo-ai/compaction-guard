@@ -1,6 +1,6 @@
-# A plugin or a skill? (design draft)
+# Design: a plugin, not a skill
 
-Status: draft, research from official documentation (S6, S8, S9). Nothing built yet.
+Research from the official documentation (S6, S8, S9), done before the build. The plugin described here exists; what was decided and tested is in [decisions.md](decisions.md).
 
 ## Recommendation
 
@@ -37,20 +37,13 @@ Before installing anything, a person can set `"idleCompaction": false` in their 
 2. Later: Anthropic's directory has a submission path (S8, S9); it reads the icon, documentation, support, privacy and terms links from the manifest, so those fields should be filled in.
 3. Check before release: `claude plugin validate` on the plugin and the marketplace, in CI.
 
-## Open questions (not verified)
+## Open questions (status 2026-11-09)
 
-1. **Cross-platform scripts.** The local scripts use `jq` and `osascript` (macOS). A public plugin needs Linux and Windows, and no dependency the user may not have. Options: POSIX shell with graceful fallbacks, or one small script in a language every install is likely to have; which language is safe to assume was not researched.
+1. **Cross-platform scripts.** Resolved for macOS and Linux: the scripts are POSIX `sh` using only `sed`, `grep`, `awk`, `date`, `cksum` and `find`, with no `jq`, and the test suite passes on macOS, Ubuntu 24.04 and Alpine 3.20. Native Windows is not tested.
 2. **What the user sees when a hook blocks a compaction** in the interactive terminal, VS Code and Desktop. Only the headless behavior was observed.
 3. **Does the hook run for the idle compaction in every client?** Observed in the terminal (twice). VS Code and Desktop received idle compaction in 2.1.314; not tested.
 4. **What happens at the true limit** with compaction blocked. Not tested (about 1,000,000 tokens of cost).
 5. **A before/after measurement.** The same task with and without an unattended compaction, counting repeated reads and wrong statements. Without it the problem statement stays anecdotal. This is the strongest thing the project could add.
-
-## Suggested order
-
-1. Review and correct the three drafts with the owner.
-2. Build the plugin skeleton from `reference/` (hooks and a wrap-up skill), validate it, test it headless as before.
-3. Publish a marketplace repository and one article built from the timeline and incident drafts, after the owner approves every quote.
-4. Run the before/after measurement and update the article with the numbers.
 
 ## Ideas, not decided
 
