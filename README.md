@@ -1,11 +1,12 @@
 <p align="center">
-  <img src="assets/header.svg" alt="Compaction Guard: you decide when Claude Code compacts" width="720"><br>
-  <a href="https://github.com/Desveladisimo-ai/compaction-guard/actions/workflows/ci.yml"><img src="https://github.com/Desveladisimo-ai/compaction-guard/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/Desveladisimo-ai/compaction-guard" alt="MIT license"></a>
-  <a href="https://github.com/Desveladisimo-ai/compaction-guard/releases"><img src="https://img.shields.io/github/v/release/Desveladisimo-ai/compaction-guard" alt="Latest release"></a>
-  <img src="https://img.shields.io/badge/Claude%20Code-plugin-3fc6ab" alt="Claude Code plugin">
-  <img src="https://img.shields.io/badge/POSIX%20sh-no%20dependencies-1f4788" alt="POSIX sh, no dependencies">
-  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-3fc6ab" alt="PRs welcome"></a>
+  <img src="assets/header.svg" alt="Compaction Guard: you decide when Claude Code compacts" width="720"><br><br>
+  <a href="https://github.com/Desveladisimo-ai/compaction-guard/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Desveladisimo-ai/compaction-guard/ci.yml?branch=main&amp;label=CI" alt="CI status" height="20"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Desveladisimo-ai/compaction-guard" alt="MIT license" height="20"></a>
+  <a href="https://github.com/Desveladisimo-ai/compaction-guard/releases"><img src="https://img.shields.io/github/v/release/Desveladisimo-ai/compaction-guard" alt="Latest release" height="20"></a>
+  <br>
+  <img src="https://img.shields.io/badge/Claude%20Code-plugin-3fc6ab" alt="Claude Code plugin" height="20">
+  <img src="https://img.shields.io/badge/POSIX%20sh-no%20dependencies-1f4788" alt="POSIX sh, no dependencies" height="20">
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-3fc6ab" alt="PRs welcome" height="20"></a>
 </p>
 
 <p align="center">
@@ -86,6 +87,13 @@ claude plugin marketplace remove compaction-guard-marketplace
 ```
 
 Your handoffs and state stay in `~/.claude/compaction-guard/` until you delete that folder.
+
+## Documentation
+
+- [Timeline](docs/timeline.md): what changed in Claude Code's compaction and when, with sources.
+- [Design](docs/design.md): why a plugin and not a skill, what a plugin can and cannot do.
+- [Decisions](docs/decisions.md): each design decision, what was verified and what was tested.
+- [Sources](docs/sources.md): every source, with its retrieval date.
 
 ## Development
 
