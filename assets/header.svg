@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="240" viewBox="0 0 900 240" role="img" aria-labelledby="t d">
+  <title id="t">Compaction Guard</title>
+  <desc id="d">Compaction Guard: you decide when Claude Code compacts the conversation.</desc>
+  <rect width="900" height="240" rx="24" fill="#1f4788"/>
+  <g transform="translate(60 40)">
+    <circle cx="80" cy="80" r="66" fill="none" stroke="#3fc6ab" stroke-width="9"/>
+    <rect x="52" y="46" width="22" height="68" rx="7" fill="#ffffff"/>
+    <rect x="86" y="46" width="22" height="68" rx="7" fill="#ffffff"/>
+  </g>
+  <text x="250" y="116" fill="#ffffff" font-family="-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="58" font-weight="700">Compaction Guard</text>
+  <text x="252" y="162" fill="#3fc6ab" font-family="-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="25">You decide when Claude Code compacts.</text>
+</svg>

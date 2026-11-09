@@ -1,49 +1,103 @@
-# compaction-guard
+<p align="center">
+  <img src="assets/header.svg" alt="Compaction Guard: you decide when Claude Code compacts" width="720"><br>
+  <a href="https://github.com/Desveladisimo-ai/compaction-guard/actions/workflows/ci.yml"><img src="https://github.com/Desveladisimo-ai/compaction-guard/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Desveladisimo-ai/compaction-guard" alt="MIT license"></a>
+  <a href="https://github.com/Desveladisimo-ai/compaction-guard/releases"><img src="https://img.shields.io/github/v/release/Desveladisimo-ai/compaction-guard" alt="Latest release"></a>
+  <img src="https://img.shields.io/badge/Claude%20Code-plugin-3fc6ab" alt="Claude Code plugin">
+  <img src="https://img.shields.io/badge/POSIX%20sh-no%20dependencies-1f4788" alt="POSIX sh, no dependencies">
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-3fc6ab" alt="PRs welcome"></a>
+</p>
 
-Working project (drafts, not published). Goal: help people who lose work to Claude Code's automatic compaction, including the idle compaction that became default-on in October 2026. First an honest, sourced account of the problem; then a plugin that makes compaction a decision the person takes, with a visible gauge, warnings the model can see, and a wrap-up procedure.
+<p align="center">
+  <a href="#install">Install</a> •
+  <a href="#what-it-does">What it does</a> •
+  <a href="#what-runs-on-your-machine">What runs on your machine</a> •
+  <a href="#configuration">Configuration</a> •
+  <a href="#limits">Limits</a> •
+  <a href="#uninstall">Uninstall</a>
+</p>
 
-Started 2026-11-06 from a working local setup built and tested over 2026-11-02 to 2026-11-06 (see `reference/`). This project is separate from any product repository.
+Claude Code compacts a long conversation automatically, replacing it with a summary, and since October 2026 it can also do so after you have been idle. Whatever the summary leaves out is gone, so work can be re-read, repeated or done wrong afterwards. **Compaction Guard makes compaction a decision you take**: it blocks automatic compaction while there is room, shows you and the assistant where the context stands, and hands the work to a fresh session when it is really time to change.
 
-## Status
-
-| Piece | State |
-|---|---|
-| Problem timeline (what changed and when, with sources) | approved draft: `docs/01-timeline-draft.md` |
-| Incident write-ups (what was lost, measured records, what the gate did) | approved draft: `docs/02-incidents-draft.md` |
-| Plugin or skill design (what to package, how to ship it) | approved draft: `docs/03-plugin-design-draft.md` |
-| Feature decisions taken with the owner (defaults, handoff, ceiling) | `docs/04-feature-decisions.md` |
-| Sources with retrieval dates | `docs/sources.md` |
-| Plugin itself (hooks, wrap-up skill, status line skill, tests) | built, version 0.1.0, tested end to end locally; not installed from a marketplace yet |
-
-## Rules for everything in this project
-
-1. A claim is one of: observed (with the command or file that shows it), taken from a public source (linked, with the retrieval date), reported by the owner (named as such), or marked "not verified".
-2. Public text from the Claude Code repository is paraphrased with version numbers and links, not copied.
-3. No claim about anyone's intent. The sources show a documented default and its effects; they do not show why anyone chose it beyond what the changelog says.
-4. Anything taken from a private project is sanitized (no names, no identifiers) and approved by the owner before publication.
-5. The plugin name must not start with `claude-` or `anthropic-` (the validator rejects it); this directory name is fine, the plugin name is chosen separately.
-
-## Files
-
-- `docs/` the drafts and the source list
-- `reference/` the three scripts and the settings snippet that worked locally (macOS, needs `jq` and `osascript`); a starting point, not the plugin
-
-## Try it (not published yet)
-
-From this folder, with a local marketplace:
+## Install
 
 ```
-claude plugin marketplace add ~/repos/compaction-guard
+claude plugin marketplace add Desveladisimo-ai/compaction-guard
 claude plugin install compaction-guard@compaction-guard-marketplace
 ```
 
-Once published to a git host, the install is one command: `/plugin install compaction-guard --marketplace <owner>/<repo>`.
+Start a new Claude Code session afterwards. Requirements: Claude Code, and a POSIX shell with `sed`, `grep`, `awk`, `date`, `cksum` and `find`, which macOS and Linux have by default. Native Windows is not tested.
 
-Run the tests: `sh tests/run-tests.sh`. Validate: `claude plugin validate ./plugins/compaction-guard`.
+## What it does
 
-What it does with the defaults: blocks automatic compaction (including idle compaction) while the context is below 95% of the window; adds a line to the assistant's context at every 100k tokens, a warning at 70% and an alert at 85%, each with the gate-check instruction; and when the check says to change session, the wrap-up skill writes a handoff to `~/.claude/compaction-guard/handoffs/<project>/pending.md`, which the next session on that project receives by itself. Thresholds can be changed with the environment variables `COMPACTION_GUARD_WARN_PCT`, `COMPACTION_GUARD_ALERT_PCT`, `COMPACTION_GUARD_CEILING_PCT`, `COMPACTION_GUARD_STEP_TOKENS` and `COMPACTION_GUARD_HANDOFF_DAYS`.
+With the defaults:
 
-Check the shell scripts: `shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh` (clean as of 2026-11-07).
+- **Blocks automatic compaction** (including idle compaction) while the context is below 95% of the window. Manual `/compact` is never blocked.
+- **Tells the assistant where the context stands**: a line at every 100k tokens, a warning at 70% and an alert at 85%, each with an instruction to check whether the next piece of work still fits.
+- **Hands work to a new session.** When the check says to change session, the `wrap-up` skill shows what it will save, waits for your go, and writes a handoff. The next session in that project receives it by itself, announces it and continues from its next step, with no message from you (interactive sessions only).
+- **Optional gauge.** The `status-line` skill adds a line such as `ctx 33%  333k/1000k  left 667k` to your status line, after asking. The plugin works without it.
 
-A new session starts from the handoff by itself: a plugin monitor wakes the assistant when the SessionStart hook has loaded a handoff, so after `/clear` (or a new session) it announces the handoff and carries on, with no message from the user. Interactive sessions only. See `docs/04-feature-decisions.md`.
+### Is this better than the built-in switches?
 
+Not always. If you only want automatic compaction off, Claude Code has simpler options: `"idleCompaction": false` for the idle case, and `autoCompactEnabled: false` or the `DISABLE_AUTO_COMPACT=1` environment variable for all of it. In our test with auto-compact off and a small window, the context kept growing with no warning at all. What this plugin adds over the switches is the visible gauge, a warning the assistant itself sees, a rule for when to change session, and the wrap-up and handoff procedure.
+
+## What runs on your machine
+
+Everything is plain shell scripts in [`plugins/compaction-guard/scripts`](plugins/compaction-guard/scripts). Nothing is sent over the network.
+
+| Piece | When it runs | What it does |
+|---|---|---|
+| `PreCompact` hook (automatic compactions only) | Before Claude Code compacts on its own | Blocks it below the ceiling, records a small flag file, and shows a desktop notification where `osascript` (macOS) or `notify-send` (Linux) exists |
+| `UserPromptSubmit` hook | At every message you send | Reads the transcript's token usage and adds the warning lines to the assistant's context |
+| `SessionStart` hook (new session and `/clear`) | When a session starts | Loads a pending handoff for the project, if there is one |
+| `handoff-announce` monitor | The whole session | Checks once a second whether a handoff was just loaded, and if so wakes the assistant to announce it. This is the "1 monitor" Claude Code shows in its status bar |
+| `wrap-up` and `status-line` skills | Only when run | Write the handoff, or show the status line setting. Neither edits your settings without your yes |
+
+Files it writes, all under `~/.claude/compaction-guard/` (or `$COMPACTION_GUARD_HOME`): `state/` (flags and counters), `handoffs/<project>/` (pending and archived handoffs) and `guard.log`. Handoffs older than 14 days are ignored. Handoffs are written by the assistant, so read one before you share it: it can contain what you worked on.
+
+## Configuration
+
+Set these environment variables to change the defaults:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `COMPACTION_GUARD_CEILING_PCT` | 95 | Automatic compaction is blocked below this percent of the window |
+| `COMPACTION_GUARD_WARN_PCT` | 70 | Warning threshold |
+| `COMPACTION_GUARD_ALERT_PCT` | 85 | Alert threshold |
+| `COMPACTION_GUARD_STEP_TOKENS` | 100000 | A context line is added every this many tokens |
+| `COMPACTION_GUARD_HANDOFF_DAYS` | 14 | Handoffs older than this are ignored |
+| `COMPACTION_GUARD_HOME` | `~/.claude/compaction-guard` | Where state and handoffs live |
+
+## Limits
+
+Stated plainly, so you can decide:
+
+- Tested on macOS, Ubuntu and Alpine (the test suite passes on all three). Native Windows is not tested.
+- What you see when a hook blocks a compaction in the VS Code and Desktop clients was not observed; the terminal and headless behavior were.
+- Whether the hook runs for idle compaction in every client was observed only in the terminal.
+- What happens at the true limit of the window, with compaction blocked, was not tested.
+- The warnings and the gate depend on the token counts in Claude Code's transcript. If that format changes and the size cannot be read, the hook fails open: compaction is allowed and the warnings stay silent, so a broken gate never traps a session. Each such case is written to `guard.log`.
+
+## Uninstall
+
+```
+claude plugin uninstall compaction-guard
+claude plugin marketplace remove compaction-guard-marketplace
+```
+
+Your handoffs and state stay in `~/.claude/compaction-guard/` until you delete that folder.
+
+## Development
+
+```
+sh tests/run-tests.sh                                              # 59 checks
+shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh
+claude plugin validate ./plugins/compaction-guard
+claude plugin validate .
+```
+
+CI runs all of this on every push. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[MIT](LICENSE) © Francisco Felix
