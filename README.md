@@ -35,7 +35,7 @@ With the defaults:
 
 - **Blocks automatic compaction** (including idle compaction) while the context is below 95% of the window. Manual `/compact` is never blocked.
 - **Tells the assistant where the context stands**: a line at every 100k tokens, a warning at 70% and an alert at 85%, each with an instruction to check whether the next piece of work still fits.
-- **Hands work to a new session.** When the check says to change session, the `wrap-up` skill shows what it will save, waits for your go, and writes a handoff. The next session in that project receives it by itself, announces it and continues from its next step, with no message from you (interactive sessions only).
+- **Saves your place and picks it up in the next session, for you.** When the check says it is time to change session, the `wrap-up` skill shows what it will save and waits for your go. It then writes a *handoff*, a short note with the goal, the state, the decisions and the next step. You never write, copy or load one: the next session in that project finds it, announces it in one line and carries on from its next step, with no message from you (interactive sessions only). The only thing you decide is when to change session; nothing is lost either way.
 - **Optional gauge.** The `status-line` skill adds a line such as `ctx 33%  333k/1000k  left 667k` to your status line, after asking. The plugin works without it.
 
 ### Is this better than the built-in switches?
@@ -54,7 +54,7 @@ Everything is plain shell scripts in [`plugins/compaction-guard/scripts`](plugin
 | `handoff-announce` monitor | The whole session | Checks once a second whether a handoff was just loaded, and if so wakes the assistant to announce it. This is the "1 monitor" Claude Code shows in its status bar |
 | `wrap-up` and `status-line` skills | Only when run | Write the handoff, or show the status line setting. Neither edits your settings without your yes |
 
-Files it writes, all under `~/.claude/compaction-guard/` (or `$COMPACTION_GUARD_HOME`): `state/` (flags and counters), `handoffs/<project>/` (pending and archived handoffs) and `guard.log`. Everything is created readable and writable by your user only (folders `700`, files `600`), including on installs made by an earlier version, which are tightened on first run. Handoffs older than 14 days are ignored. Handoffs are written by the assistant, so read one before you share it: it can contain what you worked on.
+Files it writes, all under `~/.claude/compaction-guard/` (or `$COMPACTION_GUARD_HOME`): `state/` (flags and counters), `handoffs/<project>/` (the notes saved for the next session, and the ones already used) and `guard.log`. Everything is created readable and writable by your user only (folders `700`, files `600`), including on installs made by an earlier version, which are tightened on first run. Handoffs older than 14 days are ignored. Handoffs are written by the assistant, so read one before you share it: it can contain what you worked on.
 
 Like every Claude Code plugin hook and monitor, these scripts run as your user; Claude Code decides that, not the plugin. This plugin asks for nothing beyond that: no network, no files outside `~/.claude/compaction-guard/`, and session identifiers are reduced to safe characters before they become file names. The monitor only reads and deletes a small marker file under `state/` and prints one line; you can read it in [`announce-monitor.sh`](plugins/compaction-guard/scripts/announce-monitor.sh).
 
@@ -68,7 +68,7 @@ Nothing here is required. The defaults above work out of the box, and most peopl
 | `COMPACTION_GUARD_WARN_PCT` | 70 | Warning threshold |
 | `COMPACTION_GUARD_ALERT_PCT` | 85 | Alert threshold |
 | `COMPACTION_GUARD_STEP_TOKENS` | 100000 | A context line is added every this many tokens |
-| `COMPACTION_GUARD_HANDOFF_DAYS` | 14 | Handoffs older than this are ignored |
+| `COMPACTION_GUARD_HANDOFF_DAYS` | 14 | A saved handoff older than this is not picked up |
 | `COMPACTION_GUARD_HOME` | `~/.claude/compaction-guard` | Where state and handoffs live |
 
 ## Supported and tested
@@ -89,7 +89,7 @@ claude plugin uninstall compaction-guard
 claude plugin marketplace remove compaction-guard-marketplace
 ```
 
-Your handoffs and state stay in `~/.claude/compaction-guard/` until you delete that folder.
+The plugin saves and picks up handoffs by itself, so there is nothing for you to do with them. The notes and state it already saved stay in `~/.claude/compaction-guard/` after uninstalling; delete that folder only if you want them gone.
 
 ## Documentation
 
