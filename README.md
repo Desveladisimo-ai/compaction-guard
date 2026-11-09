@@ -14,7 +14,7 @@
   <a href="#what-it-does">What it does</a> •
   <a href="#what-runs-on-your-machine">What runs on your machine</a> •
   <a href="#optional-configuration">Optional configuration</a> •
-  <a href="#limits">Limits</a> •
+  <a href="#supported-and-tested">Supported and tested</a> •
   <a href="#uninstall">Uninstall</a>
 </p>
 
@@ -56,6 +56,8 @@ Everything is plain shell scripts in [`plugins/compaction-guard/scripts`](plugin
 
 Files it writes, all under `~/.claude/compaction-guard/` (or `$COMPACTION_GUARD_HOME`): `state/` (flags and counters), `handoffs/<project>/` (pending and archived handoffs) and `guard.log`. Handoffs older than 14 days are ignored. Handoffs are written by the assistant, so read one before you share it: it can contain what you worked on.
 
+Plugin monitors run with your user's permissions, outside Claude Code's sandbox (Claude Code documents this). This one only reads and deletes a small marker file under `state/` and prints one line; you can read it in [`announce-monitor.sh`](plugins/compaction-guard/scripts/announce-monitor.sh).
+
 ## Optional configuration
 
 Nothing here is required. The defaults above work out of the box, and most people never touch these. If you want different thresholds, export any of these environment variables (for example in your shell profile) before starting Claude Code:
@@ -69,15 +71,16 @@ Nothing here is required. The defaults above work out of the box, and most peopl
 | `COMPACTION_GUARD_HANDOFF_DAYS` | 14 | Handoffs older than this are ignored |
 | `COMPACTION_GUARD_HOME` | `~/.claude/compaction-guard` | Where state and handoffs live |
 
-## Limits
+## Supported and tested
 
-Stated plainly, so you can decide:
+- **Claude Code:** tested on 2.1.314 to 2.1.319, in the terminal. Handoff auto-start needs an interactive session, because plugin monitors do not run with `-p`.
+- **Operating systems:** macOS, Ubuntu 24.04 and Alpine 3.20 (the test suite passes on all three). Native Windows is not tested.
+- **Blocking tested end to end** with a 100,000-token window: attempts at 71% and 93% were blocked, and the attempt at 115% was allowed, as designed. On a real 1,000,000-token window the same logic is covered by the unit tests only.
+- **Other clients:** what you see when a block happens in VS Code and the Desktop app, and whether the hook fires for idle compaction there, has not been observed. Reports are welcome (see the open issues).
 
-- Tested on macOS, Ubuntu and Alpine (the test suite passes on all three). Native Windows is not tested.
-- What you see when a hook blocks a compaction in the VS Code and Desktop clients was not observed; the terminal and headless behavior were.
-- Whether the hook runs for idle compaction in every client was observed only in the terminal.
-- What happens at the true limit of the window, with compaction blocked, was not tested.
-- The warnings and the gate depend on the token counts in Claude Code's transcript. If that format changes and the size cannot be read, the hook fails open: compaction is allowed and the warnings stay silent, so a broken gate never traps a session. Each such case is written to `guard.log`.
+## How it fails
+
+It is built to never trap a session. If the token count cannot be read (for example if Claude Code changes its transcript format), the hook allows compaction and the warnings stay silent, and the reason is written to `guard.log`. Above the ceiling it also allows compaction, because blocking one that Claude Code needs in order to recover from a full context would make the request fail.
 
 ## Uninstall
 
