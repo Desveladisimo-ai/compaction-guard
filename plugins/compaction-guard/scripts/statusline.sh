@@ -14,7 +14,13 @@ if [ -n "$window" ] && [ "$window" -gt 0 ]; then
     mkdir -p "$GUARD_HOME/state" 2>/dev/null
     echo "$window" > "$GUARD_HOME/state/$sid.window" 2>/dev/null
   fi
-  printf 'ctx %s%%  %sk/%sk  left %sk' $(( used * 100 / window )) $(( used / 1000 )) $(( window / 1000 )) $(( (window - used) / 1000 ))
+  # Tokens already used but no sign that the hooks ever ran in this session: the plugin
+  # was installed after the session started. Say so.
+  guard=""
+  if [ -n "$sid" ] && [ "$used" -gt 0 ] && [ ! -f "$GUARD_HOME/state/$sid.active" ]; then
+    guard="  guard OFF: run /reload-plugins"
+  fi
+  printf 'ctx %s%%  %sk/%sk  left %sk%s' $(( used * 100 / window )) $(( used / 1000 )) $(( window / 1000 )) $(( (window - used) / 1000 )) "$guard"
 else
   printf 'ctx n/a'
 fi
