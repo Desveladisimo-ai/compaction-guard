@@ -81,6 +81,8 @@ Write the Next step from the user's own requests and your own decisions in this 
 - <stale documents or loose ends seen; listed, not edited>
 ```
 
+After writing the file, make it private to the user: run `chmod 600 <path>` with the same path. The editor tool ignores the umask, so without this the file can be created readable by other users.
+
 ## 3. Save lasting facts
 
 If you have a persistent memory mechanism available, save the facts that will matter in future sessions and cannot be read from the project itself: decisions with their reason, the user's preferences, pointers to outside resources. Do not duplicate what is already saved. If you have no memory mechanism, skip this and say so.
