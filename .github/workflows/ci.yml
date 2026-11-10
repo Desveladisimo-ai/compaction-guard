@@ -73,3 +73,15 @@ jobs:
         run: claude plugin validate ./plugins/compaction-guard
       - name: Validate the marketplace
         run: claude plugin validate .
+
+  version:
+    name: Version bump
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Plugin changes need a new version
+        run: sh tests/check-version-bump.sh "origin/${{ github.base_ref }}"

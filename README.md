@@ -42,7 +42,7 @@ With the defaults:
 - **Saves your place and picks it up in the next session, for you.** When the check says it is time to change session, the `wrap-up` skill shows what it will save and waits for your go. It then writes a *handoff*, a short note with the goal, the state, the decisions and the next step. You never write, copy or load one: the next session in that project finds it, announces it in one line and carries on from its next step, with no message from you (interactive sessions only). The only thing you decide is when to change session. A handoff is handed over as notes, not as instructions: the assistant does not carry on by itself with a step that deletes data, sends data off your machine, pushes or publishes, installs software or changes credentials or settings. It names the step and asks first.
 - **Blocks automatic compaction** (including idle compaction) while the context is below 95% of the window. Manual `/compact` is never blocked.
 - **Tells the assistant where the context stands**: a line at every 100k tokens, a warning at 70% and an alert at 85%, each with an instruction to check whether the next piece of work still fits.
-- **Optional gauge.** The `status-line` skill adds a line such as `ctx 33%  333k/1000k  left 667k` to your status line, after asking. The plugin works without it.
+- **Optional gauge.** The `status-line` skill adds a line such as `ctx 33%  333k/1000k  left 667k` to your status line, after asking. It also shows `guard OFF: run /reload-plugins` in a session that has not loaded the plugin (see [troubleshooting](docs/troubleshooting.md)). The plugin works without it.
 
 ### You decide, with a safety net
 
@@ -107,6 +107,7 @@ The plugin saves and picks up handoffs by itself, so there is nothing for you to
 - [Design](docs/design.md): why a plugin and not a skill, what a plugin can and cannot do.
 - [Architecture decision records](docs/adr/README.md): each decision, why it was taken and how it was verified.
 - [Threat model](docs/security/threat-model.md) and [security audit](docs/security/audit-2026-11-09.md): what is trusted, what was found and fixed, with a regression test for each finding.
+- [Troubleshooting](docs/troubleshooting.md) and [incident reviews](docs/incidents/README.md): what to do when it seems inactive, and the blameless reviews of failures, each with its root cause and fix.
 - [Quality gates](docs/quality-gates.md): what every change must pass, how to run it locally, and measured hook latency.
 - [Verification log](docs/decisions.md): verified facts about Claude Code's hooks and the dated test results.
 - [Sources](docs/sources.md): every source, with its retrieval date.
@@ -114,7 +115,7 @@ The plugin saves and picks up handoffs by itself, so there is nothing for you to
 ## Development
 
 ```
-sh tests/run-tests.sh                                              # 90 checks
+sh tests/run-tests.sh                                              # 101 checks
 shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh
 claude plugin validate ./plugins/compaction-guard
 claude plugin validate .

@@ -136,6 +136,7 @@ unset COMPACTION_GUARD_MONITOR_ONCE COMPACTION_GUARD_MONITOR_WAIT
 p=$(cd "$T/proj" && sh "$S/handoff-path.sh")
 check "handoff path is under the guard home" "$GUARD_HOME/handoffs/" "$p"
 [ -d "$(dirname "$p")/archive" ] && ok "handoff folder created" || bad "handoff folder created" "missing"
+: > "$STATE_DIR/sl1.active"
 sl=$(printf '{"session_id":"sl1","context_window":{"context_window_size":1000000,"current_usage":{"input_tokens":2,"cache_creation_input_tokens":3000,"cache_read_input_tokens":330000}}}' | sh "$S/statusline.sh")
 eq "status line gauge" "ctx 33%  333k/1000k  left 666k" "$sl"
 eq "status line records the window" 1000000 "$(cat "$STATE_DIR/sl1.window")"
@@ -226,6 +227,24 @@ ev=$(grep -n -E '(^|[;&|[:space:]])eval[[:space:]]' "$S"/*.sh | grep -v '^[^:]*:
 eq "scripts never use eval" "" "$ev"
 sudo_use=$(grep -n -E '(^|[^A-Za-z_-])(sudo|su|doas)( |$)' "$S"/*.sh | grep -v '^[^:]*:[0-9]*:[[:space:]]*#')
 eq "scripts never escalate privileges" "" "$sudo_use"
+
+# ---- an inactive session is visible (sessions open before the install) -------------
+slin='{"session_id":"%s","context_window":{"context_window_size":1000000,"current_usage":{"input_tokens":2,"cache_creation_input_tokens":3000,"cache_read_input_tokens":330000}}}'
+rm -rf "$T/act"; export COMPACTION_GUARD_HOME="$T/act"; STATE_DIR="$T/act/state"
+sl=$(printf "$slin" ia1 | sh "$S/statusline.sh"); check "no sign of the hooks in a session with tokens: status line says guard OFF" "guard OFF: run /reload-plugins" "$sl"
+printf '{"session_id":"ia1","hook_event_name":"SessionStart","source":"startup"}' | sh "$S/mark-active.sh"; eq "mark-active prints nothing" "" "$(printf '{"session_id":"ia1"}' | sh "$S/mark-active.sh")"
+sl=$(printf "$slin" ia1 | sh "$S/statusline.sh"); absent "after the SessionStart hook ran, no guard OFF" "guard OFF" "$sl"
+sl=$(printf "$slin" ia2 | sh "$S/statusline.sh"); check "a second session without the hooks is flagged" "guard OFF" "$sl"
+hook_in ia2 "$(transcript 50000)" x | sh "$S/prompt.sh" >/dev/null
+sl=$(printf "$slin" ia2 | sh "$S/statusline.sh"); absent "after a prompt (for example after /reload-plugins) no guard OFF" "guard OFF" "$sl"
+sl=$(printf '{"session_id":"ia3","context_window":{"context_window_size":1000000,"current_usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0}}}' | sh "$S/statusline.sh"); absent "a session with no tokens yet is not flagged" "guard OFF" "$sl"
+printf '{"session_id":"../../ia4"}' | sh "$S/mark-active.sh"; [ -f "$T/act/state/.._.._ia4.active" ] && ok "mark-active sanitizes the session id" || bad "mark-active sanitizes the session id" "$(ls "$T/act/state")"
+skipwin "marker files are private to the user" || eq "marker files are private to the user" "-rw-------" "$(mode "$T/act/state/ia1.active")"
+touch -t 202001010000 "$T/act/state/old.active" "$T/act/state/old.step"; echo keep > "$T/act/state/gauge-offer"; touch -t 202001010000 "$T/act/state/gauge-offer"
+printf '{"session_id":"ia5"}' | sh "$S/mark-active.sh"
+[ -e "$T/act/state/old.active" ] || [ -e "$T/act/state/old.step" ] && bad "old per-session files are removed" "still there" || ok "old per-session files are removed"
+[ -e "$T/act/state/gauge-offer" ] && ok "the gauge offer counter is kept" || bad "the gauge offer counter is kept" "removed"
+manifest=$(cat "$ROOT/plugins/compaction-guard/hooks/hooks.json"); check "hooks.json registers mark-active for SessionStart" "mark-active.sh" "$manifest"
 
 echo; echo "$PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]

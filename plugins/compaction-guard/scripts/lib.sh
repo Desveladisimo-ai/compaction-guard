@@ -23,6 +23,16 @@ if [ -d "$GUARD_HOME" ] && [ ! -L "$GUARD_HOME" ] && [ ! -f "$GUARD_HOME/.privat
   chmod -R go-rwx "$GUARD_HOME" 2>/dev/null && : > "$GUARD_HOME/.private"
 fi
 
+# mark_active SID: records that the hooks run in this session. The optional status line
+# reads it, so a session that never loaded the plugin (one opened before the install)
+# can say so instead of looking protected.
+mark_active() {
+  [ -n "$1" ] || return 0
+  mkdir -p "$STATE_DIR" 2>/dev/null
+  : > "$STATE_DIR/$1.active" 2>/dev/null
+  return 0
+}
+
 # safe_id VALUE: VALUE reduced to letters, digits, dot, dash and underscore, so an
 # identifier from outside can never form a path.
 safe_id() {

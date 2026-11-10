@@ -12,6 +12,7 @@ INPUT=$(cat)
 sid=$(safe_id "$(printf '%s' "$INPUT" | json_str session_id)")
 transcript=$(printf '%s' "$INPUT" | json_str transcript_path)
 [ -n "$sid" ] || exit 0
+mark_active "$sid"
 
 # The first message of a session that was offered the gauge counts as one offer shown.
 pending="$STATE_DIR/gauge-offer.pending"
