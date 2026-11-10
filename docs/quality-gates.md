@@ -34,7 +34,7 @@ The monitor sleeps one second between checks and reads one file path.
 ## Branch protection and repository settings
 Verified through the GitHub API on 2026-11-09:
 
-- **`main` is protected.** A pull request is required (zero approvals, because there is a single maintainer), the five checks above must pass and be up to date, history is linear, force pushes and deletions are refused, and conversations must be resolved. Administrators are not forced through these rules, so the maintainer can bypass them; contributors cannot.
+- **`main` is protected.** A pull request is required (zero approvals, because there is a single maintainer), seven status checks must pass and be up to date (the three test runs, ShellCheck, the secret scan, plugin validation and the version bump), history is linear, force pushes and deletions are refused, and conversations must be resolved. Administrators are not forced through these rules, so the maintainer can bypass them; contributors cannot.
 - **Secret scanning and push protection are on**, in addition to the CI scan of the history.
 - **Dependabot alerts and security updates are on**; version updates for the workflow actions come from `dependabot.yml`.
 - **The default workflow token is read-only**, and workflows cannot approve pull requests.
