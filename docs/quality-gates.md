@@ -4,10 +4,11 @@ Every change passes these before it can merge. They run in CI on every push and 
 
 | Gate | What it checks | Run locally |
 |---|---|---|
-| Tests, Ubuntu, macOS and Windows (Git Bash) | 90 checks: behaviour of every hook, the monitor, the status line, privacy modes, hostile inputs, and policy | `sh tests/run-tests.sh` |
+| Tests, Ubuntu, macOS and Windows (Git Bash) | 101 checks: behaviour of every hook, the monitor, the status line, privacy modes, hostile inputs, and policy | `sh tests/run-tests.sh` |
 | Policy tests | The scripts contain no network command, no `eval`, no privilege escalation | part of the suite |
 | ShellCheck | Static analysis of all scripts as POSIX `sh` | `shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh` |
 | Secret scan | Every commit in the history, with gitleaks | `docker run --rm -v "$PWD":/repo zricethezav/gitleaks detect --source /repo --log-opts="--all" --redact` |
+| Version bump (pull requests) | A change under `plugins/` must move the version in the manifest ([ADR 0012](adr/0012-version-bump-on-every-plugin-change.md)) | `sh tests/check-version-bump.sh origin/main` |
 | Plugin and marketplace validation | The manifest and layout, with `claude plugin validate` | `claude plugin validate ./plugins/compaction-guard` and `claude plugin validate .` |
 
 Also on the Linux side, outside CI: the suite was run on Alpine 3.20 (busybox) and Ubuntu 24.04 (dash) in containers (`docker run --rm -v "$PWD":/r:ro alpine:3.20 sh -c 'cp -R /r /w && cd /w && sh tests/run-tests.sh'`).

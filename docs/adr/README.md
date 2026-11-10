@@ -14,5 +14,7 @@ Each file records one decision: the situation, what was decided, and what follow
 | [0008](0008-handoff-is-data-not-instructions.md) | A handoff is data, not instructions | Accepted |
 | [0009](0009-status-line-is-optional.md) | The status line gauge is optional and never forced | Accepted |
 | [0010](0010-handoff-lifecycle.md) | Handoff lifecycle: archive after use, expire, prune | Accepted |
+| [0011](0011-make-an-inactive-session-visible.md) | Make an inactive session visible | Accepted |
+| [0012](0012-version-bump-on-every-plugin-change.md) | Version bump on every plugin change, enforced in CI | Accepted |
 
-Related: the [threat model](../security/threat-model.md), the [security audit](../security/audit-2026-11-09.md) and the [quality gates](../quality-gates.md).
+Related: the [incident reviews](../incidents/README.md), the [threat model](../security/threat-model.md), the [security audit](../security/audit-2026-11-09.md) and the [quality gates](../quality-gates.md).
