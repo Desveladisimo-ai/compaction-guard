@@ -115,7 +115,7 @@ The plugin saves and picks up handoffs by itself, so there is nothing for you to
 ## Development
 
 ```
-sh tests/run-tests.sh                                              # 131 checks
+sh tests/run-tests.sh                                              # 132 checks
 shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh
 claude plugin validate ./plugins/compaction-guard
 claude plugin validate .

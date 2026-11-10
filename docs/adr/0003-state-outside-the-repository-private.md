@@ -16,3 +16,6 @@ Everything lives under `~/.claude/compaction-guard/` (override: `COMPACTION_GUAR
 
 ## Evidence
 Tests: "state folder is private to the user", "older install: folder tightened", "a symlinked home is not tightened", "session id is sanitized into one file name", "a home path with a dollar sign is replaced by the default". Found by the [security audit](../security/audit-2026-11-09.md) (SA-01, SA-02, IR-06, IR-07).
+
+## Amendment (2026-11-10, version 0.1.4)
+The `umask` does not cover the handoff: the wrap-up skill writes `pending.md` with the assistant's editor tool, and the file was observed as `644`. The skill now runs `chmod 600` after writing, and `session-start.sh` runs `chmod 600` on `pending.md` (a regular file only) before reading and archiving it. Test: "a handoff written as 644 ends private to the user".

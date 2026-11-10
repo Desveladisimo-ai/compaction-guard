@@ -113,6 +113,11 @@ check "a thin handoff is announced as having nothing to continue" "nothing to co
 [ -e "$hdir/pending.md" ] && bad "handoff is archived" "pending still there" || ok "handoff is archived"
 [ -n "$(ls "$hdir/archive" 2>/dev/null)" ] && ok "archive holds the handoff" || bad "archive holds the handoff" "empty"
 out=$(hook_in ss3 "" startup | sh "$S/session-start.sh"); eq "a consumed handoff is not injected again" "" "$out"
+mode() { ls -ld "$1" | cut -c1-10; }
+# The wrap-up skill writes pending.md with the editor tool, which ignores umask: the file can arrive as 644.
+rm -rf "$hdir/archive"; printf '# Handoff\n## Goal\nMode check\n## Next step\nx\n' > "$hdir/pending.md"; chmod 644 "$hdir/pending.md"
+hook_in ssm "" startup | sh "$S/session-start.sh" >/dev/null
+skipwin "a handoff written as 644 ends private to the user" || eq "a handoff written as 644 ends private to the user" "-rw-------" "$(mode "$(find "$hdir/archive" -type f | head -n 1)")"
 printf '# Handoff\nold\n' > "$hdir/pending.md"; touch -t 202501010000 "$hdir/pending.md"
 out=$(hook_in ss4 "" startup | sh "$S/session-start.sh"); eq "an expired handoff is not injected" "" "$out"
 rm -f "$hdir/pending.md"

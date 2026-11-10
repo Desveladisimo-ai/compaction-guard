@@ -62,6 +62,8 @@ if [ -n "$(find "$pending" -mtime +"$HANDOFF_MAX_DAYS" 2>/dev/null)" ]; then
   exit 0
 fi
 
+# The wrap-up writes the file with a tool that ignores umask: make it private before it is read or archived.
+chmod 600 "$pending" 2>/dev/null
 mkdir -p "$hdir/archive" 2>/dev/null
 # Used handoffs are kept for 90 days, then removed.
 find "$hdir/archive" -type f -mtime +90 -exec rm -f {} + 2>/dev/null

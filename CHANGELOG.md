@@ -2,6 +2,14 @@
 
 All notable changes to this project are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.4] - 2026-11-10
+
+### Fixed
+- A handoff written by the wrap-up skill could be created readable by other users (mode 644): the assistant writes it with its editor tool, which ignores the plugin's `umask 077`. The skill now ends the write with `chmod 600`, and the session start tightens `pending.md` to 600 before it reads or archives it, so a skipped step cannot leave it open. The folder was already `700`, so other users could not reach the file, but the documented guarantee (files `600`) now holds ([ADR 0003](docs/adr/0003-state-outside-the-repository-private.md)).
+
+### Changed
+- The test suite has 132 checks (1 new: a handoff created as 644 ends 600).
+
 ## [0.1.3] - 2026-11-09
 
 ### Fixed
