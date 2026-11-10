@@ -11,7 +11,7 @@ Every change passes these before it can merge. They run in CI on every push and 
 | Version bump (pull requests) | A change under `plugins/` must move the version in the manifest ([ADR 0012](adr/0012-version-bump-on-every-plugin-change.md)) | `sh tests/check-version-bump.sh origin/main` |
 | Plugin and marketplace validation | The manifest and layout, with `claude plugin validate` | `claude plugin validate ./plugins/compaction-guard` and `claude plugin validate .` |
 
-Also on the Linux side, outside CI: the suite was run on Alpine 3.20 (busybox) and Ubuntu 24.04 (dash) in containers (`docker run --rm -v "$PWD":/r:ro alpine:3.20 sh -c 'cp -R /r /w && cd /w && sh tests/run-tests.sh'`).
+Also on the Linux side, outside CI: the suite was run on Alpine 3.20 (busybox) and Ubuntu 24.04 (dash) in containers (`docker run --rm -v "$PWD":/r:ro alpine:3.20 sh -c 'cp -R /r /w && cd /w && sh tests/run-tests.sh'`). To test exactly what is committed, feed the container `git archive HEAD` instead: Docker Desktop bind mounts can show a stale file mode after a `chmod` and fail the "every script is executable" check on a correct commit (`git archive HEAD | docker run --rm -i alpine:3.20 sh -c 'mkdir /w && cd /w && tar -x && sh tests/run-tests.sh'`).
 
 ## Supply chain
 - Workflow actions are pinned to commit SHAs, with the version in a comment, and updated by Dependabot ([`.github/dependabot.yml`](../.github/dependabot.yml)).
@@ -27,12 +27,14 @@ Measured on macOS, 100 runs each, with a 422 KB transcript (the hooks read only 
 |---|---|---|---|
 | `UserPromptSubmit` | every message | 88 ms | 95 ms |
 | `SessionStart` | once per session | 60 ms | 69 ms |
+| `SessionStart`, 0.1.3, no handoff and no note | once per session | 63 ms | 73 ms |
+| `SessionStart`, 0.1.3, announcing a nothing-to-hand-over note | once, after such a wrap-up | 94 ms | 117 ms |
 | `PreCompact` | only on an automatic compaction | 215 ms | 241 ms |
 
-The monitor sleeps one second between checks and reads one file path.
+The first three rows were measured at 0.1.2 and not repeated; the hooks they time did not change in 0.1.3. The two 0.1.3 rows were measured on 2026-11-10 (macOS, 100 runs each, no transcript needed by this hook). The monitor sleeps one second between checks and reads one file path.
 
 ## Branch protection and repository settings
-Verified through the GitHub API on 2026-11-09:
+Verified through the GitHub API on 2026-11-09 and re-checked on 2026-11-10 (seven required checks, up to date, linear history, no force-push, secret scanning and push protection, private reporting):
 
 - **`main` is protected.** A pull request is required (zero approvals, because there is a single maintainer), seven status checks must pass and be up to date (the three test runs, ShellCheck, the secret scan, plugin validation and the version bump), history is linear, force pushes and deletions are refused, and conversations must be resolved. Administrators are not forced through these rules, so the maintainer can bypass them; contributors cannot.
 - **Secret scanning and push protection are on**, in addition to the CI scan of the history.

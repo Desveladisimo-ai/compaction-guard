@@ -21,9 +21,9 @@ Naming: the validator rejects plugin names starting with `claude-` or `anthropic
 | Block | `PreCompact` hook, exit 2 on automatic triggers, exit 0 on manual | stops the compaction nobody asked for; our local test showed it also runs for the idle case |
 | Tell the assistant | `UserPromptSubmit` hook, stdout added as context | one line at each 100k tokens, a warning at 70%, a wrap-up alert at 85%, a note after a block |
 | Show the person | status line command (user adds it) plus a desktop notification from the block hook | used and remaining tokens, always visible |
-| Wrap up | skill `wrap-up` | save decisions to memory, fix stale documents, write the next-session prompt; runs only when the gate says to move |
-| Setup | skill or command `setup` | explains the status line step, offers to show the exact settings text; never edits settings without the user's yes |
-| Settings | `userConfig` | the thresholds (default 100k step, 70%, 85%) |
+| Wrap up | skill `wrap-up` | write the handoff and save durable memory entries; stale documents are listed in the handoff, never edited; with nothing to continue it records that instead ([ADR 0013](adr/0013-announce-a-wrap-up-with-nothing-to-hand-over.md)); runs only when the gate says to move |
+| Setup | skill `status-line` | explains the status line step, offers to show the exact settings text; never edits settings without the user's yes |
+| Settings | `COMPACTION_GUARD_*` environment variables | the thresholds (default 100k step, 70%, 85%, ceiling 95%); the defaults need no setup |
 
 The gate rule we used, which the wrap-up skill should state: at the end of each piece of work and at each 100k tokens, estimate the next piece from past pieces; if the estimate times 1.5 plus a wrap-up reserve fits what is left, keep working with no wrap-up; otherwise wrap up and start a new session. A wrap-up on every check wastes tokens.
 

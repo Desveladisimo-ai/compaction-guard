@@ -1,6 +1,6 @@
 # Verification log and original decision table (2026-11-06)
 
-The decisions are now recorded one by one as [architecture decision records](adr/README.md). This page keeps the original table, the facts verified about Claude Code's hooks, and the dated test results.
+The decisions are now recorded one by one as [architecture decision records](adr/README.md). This page keeps the original table (rows D5 and D8 were superseded: the install is now `claude plugin marketplace add` plus `claude plugin install`, see the README, and a used handoff moves to `archive/` instead of carrying a status, see [ADR 0010](adr/0010-handoff-lifecycle.md)), the facts verified about Claude Code's hooks, and the dated test results.
 
 Taken by the maintainer after the design discussion. Each decision names its source or says it is a product choice.
 
