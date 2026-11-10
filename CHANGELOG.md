@@ -2,6 +2,14 @@
 
 All notable changes to this project are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.3] - 2026-11-09
+
+### Fixed
+- A new session after a wrap-up that had nothing to hand over started with no message, which looked the same as a handoff that failed to save. The wrap-up now records that it found nothing to continue (`no-handoff.sh`), and the next session in the project says so in one line, with the reason, and the monitor wakes the assistant to say it before the user types ([ADR 0013](docs/adr/0013-announce-a-wrap-up-with-nothing-to-hand-over.md)). A pending handoff still wins over the note, and a session that never ran a wrap-up still starts silently.
+
+### Changed
+- The test suite has 131 checks (30 new, for the note and for the scripts being executable).
+
 ## [0.1.2] - first public release
 
 Versions 0.1.0 and 0.1.1 were private development builds and were never published. 0.1.2 is the first release; it includes the fixes below that were found after 0.1.1.

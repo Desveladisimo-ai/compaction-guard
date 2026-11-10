@@ -13,6 +13,12 @@
 
 **Fix.** In the open session run `/reload-plugins`: it switches on the hooks without ending the session. The handoff monitor needs the session to be restarted, so until then a handoff is not picked up automatically after `/clear`. Or restart the session.
 
+## A new session started and said nothing about a handoff
+
+- If the last wrap-up found nothing to continue, the new session opens with "The previous session wrapped up with nothing to hand over: <reason>" ([ADR 0013](adr/0013-announce-a-wrap-up-with-nothing-to-hand-over.md)).
+- If it says neither that nor "Continuing from the handoff", no handoff or note was found for that project folder. Check `~/.claude/compaction-guard/guard.log` and the folder `~/.claude/compaction-guard/handoffs/`: a wrap-up run from a different folder saves under that folder's name, and a handoff or note older than 14 days is ignored.
+- A session that never ran the wrap-up leaves nothing and starts silently; that is expected.
+
 ## I updated the plugin and nothing changed
 
 Claude Code identifies a release by the `version` string in the plugin manifest. If the version did not change, `claude plugin update` reports "already at the latest version" and keeps the cached copy, even if files differ. Releases of this project bump the version on every change to the plugin (a CI check enforces it). After `claude plugin update compaction-guard@compaction-guard-marketplace`, run `/reload-plugins` in open sessions, or restart them.
