@@ -22,8 +22,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     # Windows runs the scripts under Git Bash, which is where Claude Code runs hooks on
-    # Windows (docs: setup, hooks reference). Informational until it has been green.
-    continue-on-error: ${{ matrix.os == 'windows-latest' }}
+    # Windows (docs: setup, hooks reference).
     defaults:
       run:
         shell: bash

@@ -31,5 +31,5 @@ All notable changes to this project are recorded here. The format follows [Keep 
 - CI gates: tests on Ubuntu and macOS, ShellCheck, a secret scan of the full history, plugin and marketplace validation, and policy tests that fail the build on a network call, `eval` or privilege escalation. Actions are pinned to commit SHAs and updated by Dependabot.
 
 ### Known limits
-- Native Windows is not tested.
-- What VS Code and the Desktop app show when a compaction is blocked, and whether the hook fires for idle compaction there, has not been observed.
+- A real Claude Code session on Windows (the scripts pass the test suite under Git Bash in CI) and what VS Code and the Desktop app show when a compaction is blocked have not been observed; `docs/testing/client-checklist.md` says how.
+- Sessions that were already open at install time need `/reload-plugins` (hooks) or a restart (monitor).

@@ -29,7 +29,11 @@ claude plugin marketplace add Desveladisimo-ai/compaction-guard
 claude plugin install compaction-guard@compaction-guard-marketplace
 ```
 
-Start a new Claude Code session afterwards. That is all: it works with its defaults, with no setup. Requirements: Claude Code, and a POSIX shell with `sed`, `grep`, `awk`, `date`, `cksum` and `find`, which macOS and Linux have by default. Native Windows is not tested.
+Start a new Claude Code session afterwards. That is all: it works with its defaults, with no setup.
+
+**Sessions that were already open when you installed it do not have the plugin**: Claude Code loads plugins when a session starts. In an open session, run `/reload-plugins` to switch on the hooks (the handoff monitor needs that session to be restarted), or restart it. `claude plugin list` shows the plugin as installed either way, so check a long-running session before relying on it.
+
+Requirements: Claude Code, and a POSIX shell with `sed`, `grep`, `awk`, `date`, `cksum` and `find`, which macOS and Linux have by default. On native Windows, install [Git for Windows](https://git-scm.com/downloads/win): Claude Code runs hooks in Git Bash there, and the monitor needs it. WSL works like Linux.
 
 ## What it does
 
@@ -80,9 +84,9 @@ Nothing here is required. The defaults above work out of the box, and most peopl
 ## Supported and tested
 
 - **Claude Code:** tested on 2.1.314 to 2.1.319, in the terminal. Handoff auto-start needs an interactive session, because plugin monitors do not run with `-p`.
-- **Operating systems:** macOS, Ubuntu 24.04 and Alpine 3.20 (the test suite passes on all three). Native Windows is not tested.
+- **Operating systems:** macOS, Ubuntu 24.04, Alpine 3.20 and Windows under Git Bash (the test suite passes on all four; on Windows the checks that need file modes or symlinks are skipped). A real Claude Code session on Windows has not been checked yet; see the [client checklist](docs/testing/client-checklist.md).
 - **Blocking tested end to end** with a 100,000-token window: attempts at 71% and 93% were blocked, and the attempt at 115% was allowed, as designed. On a real 1,000,000-token window the same logic is covered by the unit tests only.
-- **Other clients:** what you see when a block happens in VS Code and the Desktop app, and whether the hook fires for idle compaction there, has not been observed. Reports are welcome (see the open issues).
+- **Other clients:** Claude Code fires the same hook events in the terminal, IDE extensions and the Desktop app, and the VS Code extension shares plugins with the CLI (Claude Code documentation). What each client's own interface shows when a block happens has not been observed; the checklist above says how to check it, and results are welcome in the open issues.
 
 ## How it fails
 
