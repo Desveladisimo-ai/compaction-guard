@@ -10,6 +10,10 @@ export COMPACTION_GUARD_HOME="$T/home"
 unset CLAUDE_CODE_AUTO_COMPACT_WINDOW
 
 ok()   { PASS=$((PASS+1)); echo "ok   $1"; }
+# On Windows (Git Bash) file modes and symlinks are not POSIX: those checks are skipped,
+# and the state lives under the user's profile folder, which Windows restricts by ACL.
+case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) WIN=1 ;; *) WIN=0 ;; esac
+skipwin() { [ "$WIN" = 1 ] || return 1; ok "skipped on Windows: $1"; return 0; }
 bad()  { FAIL=$((FAIL+1)); echo "FAIL $1"; echo "     $2"; }
 check() { # name, expected substring, actual
   case "$3" in *"$2"*) ok "$1" ;; *) bad "$1" "expected to contain: $2 | got: $3" ;; esac
@@ -141,15 +145,15 @@ sl=$(printf '{"session_id":"sl2"}' | sh "$S/statusline.sh"); eq "status line wit
 mode() { ls -ld "$1" | cut -c1-10; }
 rm -rf "$T/home"
 hook_in priv1 "$(transcript 150000)" auto | sh "$S/pre-compact.sh" >/dev/null 2>&1
-eq "state folder is private to the user" "drwx------" "$(mode "$T/home/state")"
-eq "state files are private to the user" "-rw-------" "$(mode "$T/home/state/priv1.blocked")"
+skipwin "state folder is private to the user" || eq "state folder is private to the user" "drwx------" "$(mode "$T/home/state")"
+skipwin "state files are private to the user" || eq "state files are private to the user" "-rw-------" "$(mode "$T/home/state/priv1.blocked")"
 sh "$S/handoff-path.sh" >/dev/null
-eq "handoff folder is private to the user" "drwx------" "$(mode "$(find "$T/home/handoffs" -mindepth 1 -maxdepth 1 -type d | head -n 1)")"
+skipwin "handoff folder is private to the user" || eq "handoff folder is private to the user" "drwx------" "$(mode "$(find "$T/home/handoffs" -mindepth 1 -maxdepth 1 -type d | head -n 1)")"
 # an install made by an earlier version (default umask) is tightened once
 mkdir -p "$T/old/state"; chmod 755 "$T/old" "$T/old/state"; echo x > "$T/old/state/f"; chmod 644 "$T/old/state/f"
 COMPACTION_GUARD_HOME="$T/old" sh -c '. "$1"' sh "$S/lib.sh"
-eq "older install: folder tightened" "drwx------" "$(mode "$T/old/state")"
-eq "older install: file tightened" "-rw-------" "$(mode "$T/old/state/f")"
+skipwin "older install: folder tightened" || eq "older install: folder tightened" "drwx------" "$(mode "$T/old/state")"
+skipwin "older install: file tightened" || eq "older install: file tightened" "-rw-------" "$(mode "$T/old/state/f")"
 # a session id can never form a path
 hook_in "../../escape" "$(transcript 150000)" auto | sh "$S/pre-compact.sh" >/dev/null 2>&1
 [ -e "$T/escape.blocked" ] || [ -e "$T/../escape.blocked" ] && bad "session id stays inside the state folder" "file written outside" || ok "session id stays inside the state folder"
@@ -179,8 +183,11 @@ hdir="$T/hard/handoffs/$(project_key "$T/proj")"; mkdir -p "$hdir"; mkfifo "$hdi
 hook_in hf1 "" startup | sh "$S/session-start.sh" >"$T/ss.out" 2>&1 &
 pid=$!; i=0; while kill -0 "$pid" 2>/dev/null && [ "$i" -lt 5 ]; do sleep 1; i=$((i+1)); done
 if kill -0 "$pid" 2>/dev/null; then kill "$pid" 2>/dev/null; bad "a pipe named pending.md does not hang the session start" "still running after 5 s"; else ok "a pipe named pending.md does not hang the session start"; fi
-rm -f "$hdir/pending.md"; echo "TOP_SECRET_CONTENT" > "$T/secret.txt"; ln -s "$T/secret.txt" "$hdir/pending.md"
+rm -f "$hdir/pending.md"
+if [ "$WIN" = 1 ]; then ok "skipped on Windows: a link named pending.md is not followed"; else
+echo "TOP_SECRET_CONTENT" > "$T/secret.txt"; ln -s "$T/secret.txt" "$hdir/pending.md"
 out=$(hook_in hf2 "" startup | sh "$S/session-start.sh"); absent "a link named pending.md is not followed" "TOP_SECRET_CONTENT" "$out"
+fi
 rm -f "$hdir/pending.md"
 export COMPACTION_GUARD_MONITOR_ONCE=1 COMPACTION_GUARD_MONITOR_WAIT=1
 mkdir -p "$T/mproj2"; mkdir -p "$T/hard/state/announce.$(cd "$T/mproj2" && phys_key "$PWD")"
@@ -200,9 +207,11 @@ touch -t 202001010000 "$hdir/archive/20200101T000000Z.md" 2>/dev/null || { : > "
 printf '# Handoff\nx\n## Next step\ny\n' > "$hdir/pending.md"; hook_in hf5 "" startup | sh "$S/session-start.sh" >/dev/null
 [ -e "$hdir/archive/20200101T000000Z.md" ] && bad "an old archived handoff is removed" "still there" || ok "an old archived handoff is removed"
 # the folder is only tightened when it is a real folder of the current user
+if [ "$WIN" != 1 ]; then
 mkdir -p "$T/tgt/state"; chmod 755 "$T/tgt" "$T/tgt/state"; ln -s "$T/tgt" "$T/lnk"
 COMPACTION_GUARD_HOME="$T/lnk" sh -c '. "$1"' sh "$S/lib.sh"
-eq "a symlinked home is not tightened" "drwxr-xr-x" "$(mode "$T/tgt")"
+fi
+skipwin "a symlinked home is not tightened" || eq "a symlinked home is not tightened" "drwxr-xr-x" "$(mode "$T/tgt")"
 # the log stays small
 head -c 300000 /dev/zero | tr '\0' 'x' | sed 's/\(.\{80\}\)/\1\n/g' > "$T/hard/guard.log"
 . "$S/lib.sh"; log_line "rotation check"
