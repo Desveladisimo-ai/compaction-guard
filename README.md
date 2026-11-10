@@ -1,7 +1,7 @@
 <p align="center">
   <img src="assets/header.svg" alt="Compaction Guard: you decide when Claude Code compacts" width="720"><br><br>
   <a href="https://github.com/Desveladisimo-ai/compaction-guard/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Desveladisimo-ai/compaction-guard/ci.yml?branch=main&amp;label=CI" alt="CI status" height="20"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/Desveladisimo-ai/compaction-guard" alt="MIT license" height="20"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Desveladisimo-ai/compaction-guard?style=flat" alt="MIT license" height="20"></a>
   <a href="https://github.com/Desveladisimo-ai/compaction-guard/releases"><img src="https://img.shields.io/github/v/release/Desveladisimo-ai/compaction-guard" alt="Latest release" height="20"></a>
   <br>
   <img src="https://img.shields.io/badge/Claude%20Code-plugin-3fc6ab" alt="Claude Code plugin" height="20">
@@ -86,7 +86,7 @@ Nothing here is required. The defaults above work out of the box, and most peopl
 - **Claude Code:** tested on 2.1.314 to 2.1.319, in the terminal. Handoff auto-start needs an interactive session, because plugin monitors do not run with `-p`.
 - **Operating systems:** macOS, Ubuntu 24.04, Alpine 3.20 and Windows under Git Bash (the test suite passes on all four; on Windows the checks that need file modes or symlinks are skipped). A real Claude Code session on Windows has not been checked yet; see the [client checklist](docs/testing/client-checklist.md).
 - **Blocking tested end to end** with a 100,000-token window: attempts at 71% and 93% were blocked, and the attempt at 115% was allowed, as designed. On a real 1,000,000-token window the same logic is covered by the unit tests only.
-- **Other clients:** Claude Code fires the same hook events in the terminal, IDE extensions and the Desktop app, and the VS Code extension shares plugins with the CLI (Claude Code documentation). What each client's own interface shows when a block happens has not been observed; the checklist above says how to check it, and results are welcome in the open issues.
+- **Other clients:** Claude Code fires the same hook events in the terminal, IDE extensions and the Desktop app, and the VS Code extension shares plugins with the CLI (Claude Code documentation). What each client's own interface shows when a block happens has not been observed; the [client checklist](docs/testing/client-checklist.md) says how to check it, and the open verification issues track it.
 
 ## How it fails
 

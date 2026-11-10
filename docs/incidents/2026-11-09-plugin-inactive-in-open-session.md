@@ -47,4 +47,5 @@ The first explanation offered during the investigation, that the hooks are read 
 Whether a session has loaded a plugin is decided by Claude Code. A user without the status line gauge still has to know to reload or restart; the README and the troubleshooting page say so, and nothing in the plugin can load itself into a running session.
 
 ## Follow-up
-- When the repository is public, confirm the exact `owner/repo` install command and that `claude plugin update` delivers a new version from the git source.
+- Done 2026-11-09: the exact `owner/repo` install command works for an anonymous user and installs 0.1.2.
+- Open: confirm that `claude plugin update` delivers the next version from the git source, at the first release after 0.1.2.

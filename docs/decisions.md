@@ -60,7 +60,7 @@ Version 0.1.0 of the plugin is in `plugins/compaction-guard`. Hooks are POSIX sh
 
 ## Not tested
 
-- ~~The plugin installed from a marketplace~~ Tested on 2026-11-09: installed into a fresh Claude Code config from a local marketplace and from the git remote; the scripts arrive executable and the hooks run from the installed copy. Still untested: the exact `owner/repo` shorthand, which needs the repository to be public.
+- ~~The plugin installed from a marketplace~~ Tested on 2026-11-09: installed into a fresh Claude Code config from a local marketplace and from the git remote; the scripts arrive executable and the hooks run from the installed copy. The exact `owner/repo` shorthand was tested once the repository was public (2026-11-09): with no credentials, no SSH or git configuration and a fresh Claude Code config, `claude plugin marketplace add Desveladisimo-ai/compaction-guard` and `claude plugin install compaction-guard@compaction-guard-marketplace` installed 0.1.2.
 - What the interactive terminal, VS Code and Desktop show on a block; Linux and Windows.
 - The 1,000,000-token window behavior of the ceiling on a real long session (the logic is covered by the unit tests; the live test used a 100,000 window).
 - The status line skill (written, not run).

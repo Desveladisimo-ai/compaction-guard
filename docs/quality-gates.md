@@ -38,7 +38,7 @@ Verified through the GitHub API on 2026-11-09:
 - **Secret scanning and push protection are on**, in addition to the CI scan of the history.
 - **Dependabot alerts and security updates are on**; version updates for the workflow actions come from `dependabot.yml`.
 - **The default workflow token is read-only**, and workflows cannot approve pull requests.
-- **Private vulnerability reporting** is not available while the repository is private (the API returns 404); it is switched on when the repository is made public.
+- **Private vulnerability reporting is on** (switched on when the repository was made public on 2026-11-09; the API returned 404 while it was private).
 
 ## Audits
 See [the security audit](security/audit-2026-11-09.md) and [the threat model](security/threat-model.md).
