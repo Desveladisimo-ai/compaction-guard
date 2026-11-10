@@ -48,4 +48,4 @@ Whether a session has loaded a plugin is decided by Claude Code. A user without 
 
 ## Follow-up
 - Done 2026-11-09: the exact `owner/repo` install command works for an anonymous user and installs 0.1.2.
-- Open: confirm that `claude plugin update` delivers the next version from the git source, at the first release after 0.1.2.
+- Done 2026-11-10: with 0.1.3, `claude plugin update` moved an install from 0.1.2 to 0.1.3 (scratch git marketplace in an isolated config folder, local path source), and a fresh install from `Desveladisimo-ai/compaction-guard` delivered 0.1.3 with every script executable. Not verified: `claude plugin update` over the GitHub address from an older installed version, which needs the next release.

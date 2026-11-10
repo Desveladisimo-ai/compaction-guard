@@ -78,12 +78,12 @@ Nothing here is required. The defaults above work out of the box, and most peopl
 | `COMPACTION_GUARD_WARN_PCT` | 70 | Warning threshold |
 | `COMPACTION_GUARD_ALERT_PCT` | 85 | Alert threshold |
 | `COMPACTION_GUARD_STEP_TOKENS` | 100000 | A context line is added every this many tokens |
-| `COMPACTION_GUARD_HANDOFF_DAYS` | 14 | A saved handoff older than this is not picked up |
+| `COMPACTION_GUARD_HANDOFF_DAYS` | 14 | A saved handoff, or a nothing-to-hand-over note, older than this is not picked up |
 | `COMPACTION_GUARD_HOME` | `~/.claude/compaction-guard` | Where state and handoffs live |
 
 ## Supported and tested
 
-- **Claude Code:** tested on 2.1.314 to 2.1.319, in the terminal. Handoff auto-start needs an interactive session, because plugin monitors do not run with `-p`.
+- **Claude Code:** tested on 2.1.314 to 2.1.319 in the terminal; the 0.1.3 announcement of a wrap-up with nothing to hand over was run on 2.1.322 with `claude -p` (hook and skill), and its monitor wake-up has not been seen in an interactive session. Handoff auto-start needs an interactive session, because plugin monitors do not run with `-p`.
 - **Operating systems:** macOS, Ubuntu 24.04, Alpine 3.20 and Windows under Git Bash (the test suite passes on all four; on Windows the checks that need file modes or symlinks are skipped). A real Claude Code session on Windows has not been checked yet; see the [client checklist](docs/testing/client-checklist.md).
 - **Blocking tested end to end** with a 100,000-token window: attempts at 71% and 93% were blocked, and the attempt at 115% was allowed, as designed. On a real 1,000,000-token window the same logic is covered by the unit tests only.
 - **Other clients:** Claude Code fires the same hook events in the terminal, IDE extensions and the Desktop app, and the VS Code extension shares plugins with the CLI (Claude Code documentation). What each client's own interface shows when a block happens has not been observed; the [client checklist](docs/testing/client-checklist.md) says how to check it, and the open verification issues track it.
