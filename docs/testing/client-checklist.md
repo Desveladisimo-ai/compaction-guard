@@ -16,7 +16,8 @@ What is not known, and what this checklist answers: that a real session in that 
 4. **Check the warning.** Expected: the assistant's context carries a line such as `Context: 71% (...)`; the assistant tells you about the gate check.
 5. **Check a block.** Keep going until Claude Code compacts on its own, below 95%. Expected: the compaction does not happen, you get a desktop notification where `osascript` or `notify-send` exist, and the next message carries a "blocked an automatic compaction" line. Note exactly what the client shows at that moment, including nothing.
 6. **Check a handoff.** Ask the assistant to run `/compaction-guard:wrap-up`, say yes, then type `/clear`. Expected: the assistant announces "Continuing from the handoff: ..." by itself and names the next step.
-7. **Check the files.** Look at `~/.claude/compaction-guard/` (on Windows: `%USERPROFILE%\.claude\compaction-guard\`): `state/`, `handoffs/<project>/archive/` (the used handoff) and `guard.log`.
+7. **Check a wrap-up with nothing to hand over** (0.1.3 or later). In a new session where nothing has been done, run `/compaction-guard:wrap-up`, say yes, then type `/clear`. Expected: the assistant opens with "The previous session wrapped up with nothing to hand over: ..." and says so without waiting for your first message. Note whether it spoke before you typed ([ADR 0013](../adr/0013-announce-a-wrap-up-with-nothing-to-hand-over.md)).
+8. **Check the files.** Look at `~/.claude/compaction-guard/` (on Windows: `%USERPROFILE%\.claude\compaction-guard\`): `state/`, `handoffs/<project>/archive/` (the used handoff, and `-nothing.md` notes) and `guard.log`.
 
 ## What to report
 - Client and version, OS and version, and for Windows whether Git for Windows is installed.
