@@ -14,7 +14,7 @@ Versions 0.1.0 and 0.1.1 were private development builds and were never publishe
 - The optional `status-line` skill: a context gauge such as `ctx 33%  333k/1000k  left 667k`, offered up to three times and installed only after asking.
 - Optional configuration through `COMPACTION_GUARD_*` environment variables; the defaults need no setup.
 - Desktop notification when a compaction is blocked, where `osascript` (macOS) or `notify-send` (Linux) exists.
-- A test suite (90 checks) that passes on macOS, Ubuntu 24.04 and Alpine 3.20, ShellCheck-clean scripts, and CI that runs both plus `claude plugin validate`.
+- A test suite (101 checks) that passes on macOS, Ubuntu 24.04, Alpine 3.20 and Windows under Git Bash, ShellCheck-clean scripts, and CI that runs both plus `claude plugin validate`.
 
 ### Security
 - Everything the plugin writes is private to the user (folders `700`, files `600`); installs made by earlier development builds are tightened on first run.

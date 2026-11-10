@@ -39,7 +39,7 @@ Before installing anything, a person can set `"idleCompaction": false` in their 
 
 ## Open questions (status 2026-11-09)
 
-1. **Cross-platform scripts.** Resolved for macOS and Linux: the scripts are POSIX `sh` using only `sed`, `grep`, `awk`, `date`, `cksum` and `find`, with no `jq`, and the test suite passes on macOS, Ubuntu 24.04 and Alpine 3.20. Native Windows is not tested.
+1. **Cross-platform scripts.** Resolved for macOS and Linux: the scripts are POSIX `sh` using only `sed`, `grep`, `awk`, `date`, `cksum` and `find`, with no `jq`, and the test suite passes on macOS, Ubuntu 24.04 and Alpine 3.20. On Windows the suite passes under Git Bash in CI (hooks run in Git Bash there, so Git for Windows is required); a real Claude Code session on Windows is covered by the [client checklist](testing/client-checklist.md).
 2. **What the user sees when a hook blocks a compaction** in the interactive terminal, VS Code and Desktop. Only the headless behavior was observed.
 3. **Does the hook run for the idle compaction in every client?** Observed in the terminal (twice). VS Code and Desktop received idle compaction in 2.1.314; not tested.
 4. **What happens at the true limit** with compaction blocked. Not tested (about 1,000,000 tokens of cost).
