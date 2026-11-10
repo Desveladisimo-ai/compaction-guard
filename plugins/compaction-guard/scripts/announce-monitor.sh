@@ -1,8 +1,9 @@
 #!/bin/sh
 # Monitor. Claude Code starts it with the session, in the session's folder, and turns
 # every line it prints into a notice that wakes the assistant. When the SessionStart
-# hook has loaded a handoff it leaves a marker; this prints one line so the assistant
-# speaks first and carries on from the handoff, with no message from the user.
+# hook has loaded a handoff, or found the note that the last wrap-up had nothing to hand
+# over, it leaves a marker; this prints one line so the assistant speaks first, with no
+# message from the user.
 #
 # The process must NOT end: when a monitor ends, Claude Code reports "stream ended"
 # to the assistant, which would start a pointless turn in every session without a
@@ -16,8 +17,13 @@ marker="${STATE_DIR:?}/announce.$key"
 waited=0
 while :; do
   if regular_file "$marker"; then
+    kind=$(head -n 1 "$marker" 2>/dev/null)
     rm -f "$marker" 2>/dev/null || exit 0
-    echo "Compaction Guard: the handoff from the previous session is loaded. Announce it as your instructions say and carry on from its Next step."
+    if [ "$kind" = clean ]; then
+      echo "Compaction Guard: the previous session wrapped up with nothing to hand over. Say so as your instructions say, then wait for the user."
+    else
+      echo "Compaction Guard: the handoff from the previous session is loaded. Announce it as your instructions say and carry on from its Next step."
+    fi
     # Test hook: lets the unit tests end the process.
     [ -n "${COMPACTION_GUARD_MONITOR_ONCE:-}" ] && exit 0
   fi

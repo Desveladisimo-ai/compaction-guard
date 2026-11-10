@@ -16,5 +16,6 @@ Each file records one decision: the situation, what was decided, and what follow
 | [0010](0010-handoff-lifecycle.md) | Handoff lifecycle: archive after use, expire, prune | Accepted |
 | [0011](0011-make-an-inactive-session-visible.md) | Make an inactive session visible | Accepted |
 | [0012](0012-version-bump-on-every-plugin-change.md) | Version bump on every plugin change, enforced in CI | Accepted |
+| [0013](0013-announce-a-wrap-up-with-nothing-to-hand-over.md) | Announce a wrap-up that had nothing to hand over | Accepted |
 
 Related: the [incident reviews](../incidents/README.md), the [threat model](../security/threat-model.md), the [security audit](../security/audit-2026-11-09.md) and the [quality gates](../quality-gates.md).

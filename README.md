@@ -39,7 +39,7 @@ Requirements: Claude Code, and a POSIX shell with `sed`, `grep`, `awk`, `date`, 
 
 With the defaults:
 
-- **Saves your place and picks it up in the next session, for you.** When the check says it is time to change session, the `wrap-up` skill shows what it will save and waits for your go. It then writes a *handoff*, a short note with the goal, the state, the decisions and the next step. You never write, copy or load one: the next session in that project finds it, announces it in one line and carries on from its next step, with no message from you (interactive sessions only). The only thing you decide is when to change session. A handoff is handed over as notes, not as instructions: the assistant does not carry on by itself with a step that deletes data, sends data off your machine, pushes or publishes, installs software or changes credentials or settings. It names the step and asks first.
+- **Saves your place and picks it up in the next session, for you.** When the check says it is time to change session, the `wrap-up` skill shows what it will save and waits for your go. It then writes a *handoff*, a short note with the goal, the state, the decisions and the next step. You never write, copy or load one: the next session in that project finds it, announces it in one line and carries on from its next step, with no message from you (interactive sessions only). If the wrap-up finds nothing to continue, it saves no handoff but leaves a one-line note, and the next session says so and why, so a quiet start is never a handoff that went missing. The only thing you decide is when to change session. A handoff is handed over as notes, not as instructions: the assistant does not carry on by itself with a step that deletes data, sends data off your machine, pushes or publishes, installs software or changes credentials or settings. It names the step and asks first.
 - **Blocks automatic compaction** (including idle compaction) while the context is below 95% of the window. Manual `/compact` is never blocked.
 - **Tells the assistant where the context stands**: a line at every 100k tokens, a warning at 70% and an alert at 85%, each with an instruction to check whether the next piece of work still fits.
 - **Optional gauge.** The `status-line` skill adds a line such as `ctx 33%  333k/1000k  left 667k` to your status line, after asking. It also shows `guard OFF: run /reload-plugins` in a session that has not loaded the plugin (see [troubleshooting](docs/troubleshooting.md)). The plugin works without it.
@@ -60,11 +60,11 @@ Everything is plain shell scripts in [`plugins/compaction-guard/scripts`](plugin
 |---|---|---|
 | `PreCompact` hook (automatic compactions only) | Before Claude Code compacts on its own | Blocks it below the ceiling, records a small flag file, and shows a desktop notification where `osascript` (macOS) or `notify-send` (Linux) exists |
 | `UserPromptSubmit` hook | At every message you send | Reads the transcript's token usage and adds the warning lines to the assistant's context |
-| `SessionStart` hook (new session and `/clear`) | When a session starts | Loads a pending handoff for the project, if there is one |
-| `handoff-announce` monitor | The whole session | Checks once a second whether a handoff was just loaded, and if so wakes the assistant to announce it. This is the "1 monitor" Claude Code shows in its status bar |
+| `SessionStart` hook (new session and `/clear`) | When a session starts | Loads a pending handoff for the project, if there is one; if the last wrap-up had nothing to hand over, says that instead |
+| `handoff-announce` monitor | The whole session | Checks once a second whether a handoff (or a note that there was none) was just loaded, and if so wakes the assistant to announce it. This is the "1 monitor" Claude Code shows in its status bar |
 | `wrap-up` and `status-line` skills | Only when run | Write the handoff, or show the status line setting. Neither edits your settings without your yes |
 
-Files it writes, all under `~/.claude/compaction-guard/` (or `$COMPACTION_GUARD_HOME`): `state/` (flags and counters), `handoffs/<project>/` (the notes saved for the next session, and the ones already used) and `guard.log`. Everything is created readable and writable by your user only (folders `700`, files `600`), including on installs made by an earlier version, which are tightened on first run. Handoffs older than 14 days are ignored. Handoffs are written by the assistant, so read one before you share it: it can contain what you worked on.
+Files it writes, all under `~/.claude/compaction-guard/` (or `$COMPACTION_GUARD_HOME`): `state/` (flags and counters), `handoffs/<project>/` (the notes saved for the next session, the one-line note when a wrap-up had nothing to hand over, and the ones already used) and `guard.log`. Everything is created readable and writable by your user only (folders `700`, files `600`), including on installs made by an earlier version, which are tightened on first run. Handoffs older than 14 days are ignored. Handoffs are written by the assistant, so read one before you share it: it can contain what you worked on.
 
 Like every Claude Code plugin hook and monitor, these scripts run as your user; Claude Code decides that, not the plugin. This plugin asks for nothing beyond that: no network, no files outside `~/.claude/compaction-guard/`, and session identifiers are reduced to safe characters before they become file names. The monitor only reads and deletes a small marker file under `state/` and prints one line; you can read it in [`announce-monitor.sh`](plugins/compaction-guard/scripts/announce-monitor.sh).
 
@@ -115,7 +115,7 @@ The plugin saves and picks up handoffs by itself, so there is nothing for you to
 ## Development
 
 ```
-sh tests/run-tests.sh                                              # 101 checks
+sh tests/run-tests.sh                                              # 131 checks
 shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh
 claude plugin validate ./plugins/compaction-guard
 claude plugin validate .

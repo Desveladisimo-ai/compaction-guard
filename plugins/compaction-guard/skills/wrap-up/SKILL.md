@@ -14,9 +14,19 @@ Saving ends this session's work, so the user decides.
 - If the user just ran `/compaction-guard:wrap-up` or said yes to your proposal, that is the go. Continue to step 1.
 - Otherwise, do not write anything yet. Tell the user, briefly: (1) why now: what just finished, why the next task is a clear boundary or does not fit in the room left, the context size and the estimate for the next piece; (2) what you will save: the handoff (goal, state, decisions, next step, what waits on them), any lasting memory entries you will add, and any stale documents you noticed, listed and not changed. Then ask for the go, and stop.
 
-## 0b. If there is nothing to hand over, say so and write nothing
+## 0b. If there is nothing to hand over, say so and record that
 
-A handoff is for work that continues. If this session has no work worth continuing (no decisions, nothing half done, no concrete next step that is not already written in the project's own files), do not write a handoff. Tell the user in one or two lines: "Nothing to hand over: <why>. A new session starts clean." Do the memory step only if something lasting was learned. This matters because a thin handoff makes the next session start with an empty announcement.
+A handoff is for work that continues. If this session has no work worth continuing (no decisions, nothing half done, no concrete next step that is not already written in the project's own files), do not write a handoff; a thin handoff makes the next session start with an empty announcement. Instead:
+
+1. Record that the wrap-up ran and found nothing to continue, by running this command with the reason in one short sentence (plain words, no quotes), for example `everything was settled and the repository is clean`:
+
+   ```
+   "${CLAUDE_PLUGIN_ROOT}/scripts/no-handoff.sh" "<why there is nothing to hand over>"
+   ```
+
+   The next session in this project reads it and says so in one line, so a silent start is never mistaken for a handoff that failed to save. Without this record the new session cannot tell the two apart.
+2. Tell the user in one or two lines: "Nothing to hand over: <why>. The next session will say so and start clean."
+3. Do the memory step (3) only if something lasting was learned, then stop. Steps 1, 2 and 5 are for a real handoff; do not start new work in this session.
 
 ## 1. Find where to write
 
