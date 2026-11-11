@@ -18,6 +18,10 @@ Thanks for helping. This is a small plugin made of POSIX shell scripts; keeping 
 6. The build fails if a script gains a network call, an `eval` or a privilege escalation; if you have a good reason, say so in the pull request and update the policy test with it.
 7. Describe what you observed, not what you expect. A claim in the README or the docs is either something you ran, a linked source, or marked "not verified".
 
+## Trying your change in a real session
+
+Add your clone as a marketplace (`claude plugin marketplace add /path/to/clone`) and install from it. Claude Code then loads whatever is checked out in that folder, so a branch switch changes the plugin in your open sessions, and `/plugin` refuses to update it ("Local plugins cannot be updated remotely"). That is expected for a local folder.
+
 ## Reporting a bug
 
 Use the bug template. Include your Claude Code version (`claude --version`), your OS, and the last lines of `~/.claude/compaction-guard/guard.log`. Remove anything private first.

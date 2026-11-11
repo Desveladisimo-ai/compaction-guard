@@ -92,6 +92,16 @@ Nothing here is required. The defaults above work out of the box, and most peopl
 
 It is built to never trap a session. If the token count cannot be read (for example if Claude Code changes its transcript format), the hook allows compaction and the warnings stay silent, and the reason is written to `guard.log`. Above the ceiling it also allows compaction, because blocking one that Claude Code needs in order to recover from a full context would make the request fail.
 
+## Updates
+
+Claude Code does not update this plugin by itself unless you turn that on: auto-update is off by default for marketplaces that are not Anthropic's own. You decide:
+
+- **Automatic (recommended if you want fixes without checking):** in a Claude Code session run `/plugin`, open the **Marketplaces** tab, select `compaction-guard-marketplace` and choose **Enable auto-update**. From then on, after you send your first message in a session, Claude Code waits a random time of up to ten minutes, then installs any new version and shows `Plugin updated: compaction-guard · Run /reload-plugins to apply`. The session you are in keeps the old version until you run `/reload-plugins` or restart it; the handoff monitor needs a restart. New sessions load the new version.
+- **Manual:** run `claude plugin update compaction-guard@compaction-guard-marketplace`, then `/reload-plugins` in open sessions or restart them. Run it again whenever you want to check; `claude plugin marketplace update` alone only refreshes the list and does not change the installed plugin.
+- **Know when a release exists:** on the repository page choose **Watch**, then **Custom**, then **Releases**, and GitHub emails you. Fixes for security problems are marked as such in the release notes.
+
+Every change to the plugin raises its version number ([ADR 0012](docs/adr/0012-version-bump-on-every-plugin-change.md)), which is what makes an update available. The plugin itself makes no network requests, so it cannot check for updates on its own. This section comes from the Claude Code documentation on [keeping plugins updated](https://code.claude.com/docs/en/plugins/install.md); the toggle's wording and the timing are not tested by this project.
+
 ## Uninstall
 
 ```
