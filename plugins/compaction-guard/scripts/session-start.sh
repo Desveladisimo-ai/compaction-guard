@@ -10,6 +10,9 @@ INPUT=$(cat)
 dir=$(printf '%s' "$INPUT" | json_str cwd)
 [ -n "$dir" ] || dir="${CLAUDE_PROJECT_DIR:-$PWD}"
 mkdir -p "$STATE_DIR" 2>/dev/null
+# Remember this folder as a session folder, so a wrap-up run from one of its subfolders
+# (the assistant may have changed folder) writes the handoff under this key (handoff-path.sh).
+mkdir -p "$STATE_DIR/roots" 2>/dev/null && : > "$STATE_DIR/roots/$(project_key "$dir")" 2>/dev/null
 
 # Offer the optional gauge until the user installs it, declines it, or has seen the
 # offer three times. The count goes up only when the user sends a first message

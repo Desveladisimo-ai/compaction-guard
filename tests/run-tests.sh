@@ -170,6 +170,12 @@ real=$(printf '%s\n' "$out" | grep -cE '^----- end of handoff notes [0-9a-f]{8} 
 eq "the closing delimiter carries a per-run token" 1 "$real"
 
 # ---- handoff-path and status line ------------------------------------------------
+# a wrap-up run from a subfolder of the session's folder writes the handoff under the session's key
+mkdir -p "$T/rootp/sub/deeper"
+printf '{"session_id":"r1","cwd":"%s"}' "$T/rootp" | sh "$S/session-start.sh" >/dev/null
+want="$GUARD_HOME/handoffs/$(project_key "$T/rootp")/pending.md"
+got=$(cd "$T/rootp/sub/deeper" && env -u CLAUDE_PROJECT_DIR sh "$S/handoff-path.sh"); eq "a wrap-up from a subfolder uses the session's project folder" "$want" "$got"
+got=$(cd "$T/proj" && env -u CLAUDE_PROJECT_DIR sh "$S/handoff-path.sh"); eq "a folder that is no session's subfolder keeps its own key" "$GUARD_HOME/handoffs/$(project_key "$T/proj")/pending.md" "$got"
 p=$(cd "$T/proj" && sh "$S/handoff-path.sh")
 check "handoff path is under the guard home" "$GUARD_HOME/handoffs/" "$p"
 [ -d "$(dirname "$p")/archive" ] && ok "handoff folder created" || bad "handoff folder created" "missing"
