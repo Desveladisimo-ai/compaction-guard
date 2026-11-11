@@ -2,6 +2,18 @@
 
 All notable changes to this project are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.5] - 2026-11-11
+
+### Fixed
+- With two Claude Code sessions open in the same project folder (for example the one that ran the wrap-up, and a new one), the monitor of the old session could take the "handoff loaded" notice meant for the new one, and wake the old session to carry on from a handoff it never received. A notice is now claimed by one monitor only (the claim is a file move, so two monitors cannot both take it), and the line says to act on it only if the session's context contains the handoff text. The new session still receives the handoff in its context and acts on it at its first message; which session is woken before the first message depends on timing, because Claude Code does not document a session identifier a monitor can read ([ADR 0006](docs/adr/0006-automatic-pickup-by-monitor.md), [audit](docs/security/audit-2026-11-10.md)).
+- A notice left behind by a session that has no monitor (for example `claude -p`) no longer wakes a later, unrelated session: notices older than a minute are removed without a word.
+- The notice file is written through a new file and a move, so a link planted at its path is never written through.
+- The delimiters around an injected handoff or wrap-up note carry a random per-run token, so text inside the note cannot imitate the closing line.
+
+### Changed
+- The test suite has 138 checks (6 new).
+- SECURITY.md and the README state the trust boundary: the plugin protects against other OS accounts, not against someone using yours.
+
 ## [0.1.4] - 2026-11-10
 
 ### Fixed

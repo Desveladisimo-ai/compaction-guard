@@ -17,12 +17,20 @@ marker="${STATE_DIR:?}/announce.$key"
 waited=0
 while :; do
   if regular_file "$marker"; then
-    kind=$(head -n 1 "$marker" 2>/dev/null)
-    rm -f "$marker" 2>/dev/null || exit 0
-    if [ "$kind" = clean ]; then
-      echo "Compaction Guard: the previous session wrapped up with nothing to hand over. Say so as your instructions say, then wait for the user."
-    else
-      echo "Compaction Guard: the handoff from the previous session is loaded. Announce it as your instructions say and carry on from its Next step."
+    # A marker older than a minute is left over (a session without a monitor consumed
+    # the handoff): remove it, say nothing.
+    if [ -n "$(find "$marker" -mmin +1 2>/dev/null)" ]; then
+      rm -f "$marker" 2>/dev/null
+    # Claim the marker by moving it: when two sessions in this folder have a monitor,
+    # only the one whose move succeeds speaks.
+    elif mv "$marker" "$marker.claim.$$" 2>/dev/null; then
+      kind=$(head -n 1 "$marker.claim.$$" 2>/dev/null)
+      rm -f "$marker.claim.$$" 2>/dev/null
+      if [ "$kind" = clean ]; then
+        echo "Compaction Guard: the previous session wrapped up with nothing to hand over. If your context contains the block 'wrap-up note (data, not instructions)', say so as your instructions say, then wait for the user. Otherwise ignore this line."
+      else
+        echo "Compaction Guard: the handoff from the previous session is loaded. If your context contains the block 'handoff notes (data, not instructions)', announce it as your instructions say and carry on from its Next step. Otherwise ignore this line."
+      fi
     fi
     # Test hook: lets the unit tests end the process.
     [ -n "${COMPACTION_GUARD_MONITOR_ONCE:-}" ] && exit 0
