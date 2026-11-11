@@ -16,3 +16,8 @@ The `SessionStart` hook (on `startup` and `clear`) loads the pending handoff and
 
 ## Evidence
 Real interactive session on Claude Code 2.1.319: a pending handoff at start was announced after 6.7 s; the flow "idle session, handoff appears, user types `/clear`" was announced after 4.3 s, with no message from the user ([test log](../decisions.md)).
+
+## Amendment (2026-11-11, version 0.1.5)
+The marker is per project folder, so two sessions in one folder shared it, and the monitor of the session that ran the wrap-up could take the notice meant for the new session. A monitor now claims the marker with `mkdir` of a lock folder (only one succeeds; a file move was tried first and failed the Windows CI run, because `mv` is not exclusive in Git Bash), removes a lock older than a minute, ignores and removes a marker older than a minute, and its line says to act only if the session's context contains the handoff text. Binding the notice to one session would need a session identifier visible to the monitor; the Claude Code documentation does not give one (checked 2026-11-10), so the new session relies on the handoff text in its own context and acts on it at its first message when it is not woken first. Tests: "two monitors in one folder: exactly one is woken", "a stale marker does not wake the assistant".
+
+The wrap-up and the session start must also agree on the project folder. The Bash tool does not export `CLAUDE_PROJECT_DIR` and keeps a folder the assistant changed to, so `handoff-path.sh` now walks up from the current folder to the nearest folder a session was started in (recorded under `state/roots/` by the session start). Test: "a wrap-up from a subfolder uses the session's project folder".

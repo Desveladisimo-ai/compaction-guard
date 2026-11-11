@@ -4,7 +4,7 @@ Every change passes these before it can merge. They run in CI on every push and 
 
 | Gate | What it checks | Run locally |
 |---|---|---|
-| Tests, Ubuntu, macOS and Windows (Git Bash) | 132 checks: behaviour of every hook, the monitor, the status line, privacy modes, hostile inputs, and policy | `sh tests/run-tests.sh` |
+| Tests, Ubuntu, macOS and Windows (Git Bash) | 140 checks: behaviour of every hook, the monitor, the status line, privacy modes, hostile inputs, and policy | `sh tests/run-tests.sh` |
 | Policy tests | The scripts contain no network command, no `eval`, no privilege escalation | part of the suite |
 | ShellCheck | Static analysis of all scripts as POSIX `sh` | `shellcheck -x -P SCRIPTDIR -s sh plugins/compaction-guard/scripts/*.sh` |
 | Secret scan | Every commit in the history, with gitleaks | `docker run --rm -v "$PWD":/repo zricethezav/gitleaks detect --source /repo --log-opts="--all" --redact` |

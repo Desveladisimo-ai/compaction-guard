@@ -48,6 +48,20 @@ num_or() {
   if [ "$v" -ge "$3" ] 2>/dev/null; then echo "$v"; else echo "$2"; fi
 }
 
+# write_marker KIND PATH: leaves a one-word marker at PATH without ever writing through
+# a link: a new file is written next to it and moved into place.
+write_marker() {
+  rm -f "$2" 2>/dev/null
+  printf '%s\n' "$1" > "$2.$$" 2>/dev/null && mv -f "$2.$$" "$2" 2>/dev/null
+  return 0
+}
+
+# token8: eight random hex digits, for delimiters that the text between them cannot forge.
+token8() {
+  t=$(od -An -N4 -tx1 /dev/urandom 2>/dev/null | tr -d ' \n')
+  case "$t" in ????????) printf '%s' "$t" ;; *) printf '%08x' "$(( $(date +%s) % 4294967295 ))" ;; esac
+}
+
 # regular_file PATH: a plain file that is not a symlink (never a pipe, folder or link).
 regular_file() {
   [ -f "$1" ] && [ ! -L "$1" ]
