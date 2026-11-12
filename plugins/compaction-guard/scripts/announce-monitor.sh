@@ -34,7 +34,7 @@ while :; do
         if [ "$kind" = clean ]; then
           echo "Compaction Guard: the previous session wrapped up with nothing to hand over. If your context contains the block 'wrap-up note (data, not instructions)', say so as your instructions say, then wait for the user. Otherwise ignore this line."
         else
-          echo "Compaction Guard: the handoff from the previous session is loaded. If your context contains the block 'handoff notes (data, not instructions)', announce it as your instructions say and carry on from its Next step. Otherwise ignore this line."
+          echo "Compaction Guard: the handoff from the previous session is loaded. If your context contains the block 'handoff notes (data, not instructions)', announce it as your instructions say. Otherwise ignore this line."
         fi
       else
         rmdir "$marker.lock" 2>/dev/null

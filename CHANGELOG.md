@@ -2,6 +2,14 @@
 
 All notable changes to this project are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.6] - 2026-11-12
+
+### Fixed
+- A handoff whose next step waits on the user (an approval, an answer, a condition such as "if the user says merge") was announced with "The previous session left a handoff with nothing to continue.", although the handoff was delivered and held real state. The assistant now says "Continuing from the handoff: <goal>. Waiting on you: <what is pending>. Say go, or tell me something else." and waits. The "nothing to continue" line is kept for a handoff with no work done and nothing open. A "Waiting on the user" section alone does not make a handoff a waiting one: a concrete next step still starts ([ADR 0013](docs/adr/0013-announce-a-wrap-up-with-nothing-to-hand-over.md)). Found in the maintainer's own sessions; no handoff was lost, only the first line was wrong (checked against the session transcripts).
+
+### Changed
+- The test suite has 142 checks (2 new, for the instruction text). The behaviour itself was checked with a real Claude Code client on four handoffs: waiting on answers, conditional on a merge, a concrete step beside an unrelated wait, and nothing queued.
+
 ## [0.1.5] - 2026-11-11
 
 ### Fixed

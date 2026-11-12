@@ -110,6 +110,8 @@ check "injection tells the assistant to announce the handoff" "Continuing from t
 check "the announcement is a statement the user can interrupt" "Say stop if you want something else" "$out"
 absent "the announcement does not ask a question it will not wait for" "OK?" "$out"
 check "a thin handoff is announced as having nothing to continue" "nothing to continue" "$out"
+check "a handoff that waits on the user is not announced as having nothing to continue" "Waiting on you:" "$out"
+check "the waiting case says to wait for the user and not start the work" "do not start the work" "$out"
 [ -e "$hdir/pending.md" ] && bad "handoff is archived" "pending still there" || ok "handoff is archived"
 [ -n "$(ls "$hdir/archive" 2>/dev/null)" ] && ok "archive holds the handoff" || bad "archive holds the handoff" "empty"
 out=$(hook_in ss3 "" startup | sh "$S/session-start.sh"); eq "a consumed handoff is not injected again" "" "$out"
