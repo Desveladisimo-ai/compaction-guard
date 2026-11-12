@@ -147,21 +147,21 @@ out=$(cd "$T/mproj" && sh "$S/announce-monitor.sh"); eq "a stale marker does not
 wake=$(echo injected > "$mk"; cd "$T/mproj" && sh "$S/announce-monitor.sh")
 check "the wake-up is harmless in a session that has no handoff text" "Otherwise ignore this line" "$wake"
 export COMPACTION_GUARD_MONITOR_WAIT=6
-probe() { # NAME, command using $1 as the target path; counts double winners
+probe() { # NAME, command (uses $P target, $SRC source, $N racer); counts double winners
   dbl=0; i=0
-  while [ "$i" -lt 60 ]; do i=$((i+1)); rm -rf "$T/px" "$T/px.a" "$T/px.b" "$T/px.src" "$T/px.src2"; : > "$T/px.src"
-    ( eval "$2" "$T/px" "$T/px.src" "$T/px.src2.a" 2>/dev/null && : > "$T/px.a" ) & q1=$!
-    ( eval "$2" "$T/px" "$T/px.src" "$T/px.src2.b" 2>/dev/null && : > "$T/px.b" ) & q2=$!
+  while [ "$i" -lt 100 ]; do i=$((i+1)); rm -rf "$T/px" "$T/px.a" "$T/px.b" "$T/px.src" "$T/px.dst.a" "$T/px.dst.b"; : > "$T/px.src"
+    ( P="$T/px"; SRC="$T/px.src"; N=a; eval "$2" 2>/dev/null && : > "$T/px.a" ) & q1=$!
+    ( P="$T/px"; SRC="$T/px.src"; N=b; eval "$2" 2>/dev/null && : > "$T/px.b" ) & q2=$!
     wait "$q1" "$q2"
     [ -e "$T/px.a" ] && [ -e "$T/px.b" ] && dbl=$((dbl+1))
   done
-  echo "DIAG $1 double-winners: $dbl of 60 ($(uname -s))"
+  echo "DIAG $1 double-winners: $dbl of 100 ($(uname -s) $(uname -r))"
 }
-probe mkdir 'mkdir'
-probe symlink 'ln -s x'
-probe hardlink 'sh -c '"'"'ln "$2" "$1"'"'"' _'
-probe noclobber 'sh -c '"'"'set -C; : > "$1"'"'"' _'
-probe rename 'sh -c '"'"'mv "$2" "$3"'"'"' _'
+probe mkdir 'mkdir "$P"'
+probe symlink 'ln -s x "$P"'
+probe hardlink 'ln "$SRC" "$P"'
+probe noclobber 'set -C; : > "$P"'
+probe rename 'mv "$SRC" "$T/px.dst.$N"'
 trial=0; badtrial=0; counts=""
 while [ "$trial" -lt 5 ]; do
   trial=$((trial+1)); rm -f "$T/m1.out" "$T/m2.out"
