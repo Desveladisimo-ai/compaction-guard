@@ -153,7 +153,7 @@ while [ "$trial" -lt 5 ]; do
   (cd "$T/mproj" && sh "$S/announce-monitor.sh" > "$T/m1.out") & p1=$!
   (cd "$T/mproj" && sh "$S/announce-monitor.sh" > "$T/m2.out") & p2=$!
   sleep 2; echo injected > "$mk"; wait "$p1" "$p2"
-  n=$(cat "$T/m1.out" "$T/m2.out" | wc -l | tr -d ' '); counts="$counts $n"
+  n=$(cat "$T/m1.out" "$T/m2.out" | wc -l | tr -d ' '); counts="$counts $n(m1=$(wc -l < "$T/m1.out" | tr -d ' ') m2=$(wc -l < "$T/m2.out" | tr -d ' ') 1st=$(head -c 40 "$T/m1.out" | tr -d '\n'))"
   [ "$n" = 1 ] || badtrial=$((badtrial+1))
 done
 [ "$badtrial" = 0 ] && ok "two monitors in one folder: exactly one is woken" || bad "two monitors in one folder: exactly one is woken" "$badtrial of 5 trials gave zero or two lines (lines per trial:$counts)"
