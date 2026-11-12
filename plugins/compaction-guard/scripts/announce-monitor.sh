@@ -19,6 +19,7 @@ while :; do
   # A lock left by a monitor that was killed mid-claim must not block the next notice.
   [ -d "$marker.lock" ] && [ -n "$(find "$marker.lock" -maxdepth 0 -mmin +1 2>/dev/null)" ] && rmdir "$marker.lock" 2>/dev/null
   if regular_file "$marker"; then
+    [ -n "${CG_DBG:-}" ] && echo "pid $$ saw marker $(date +%s.%N 2>/dev/null)" >&2
     # A marker older than a minute is left over (a session without a monitor consumed
     # the handoff): remove it, say nothing.
     if [ -n "$(find "$marker" -mmin +1 2>/dev/null)" ]; then
@@ -27,7 +28,9 @@ while :; do
     # (a file move is not exclusive in Git Bash): when two sessions in this folder have a
     # monitor, only the one that makes the lock folder speaks.
     elif mkdir "$marker.lock" 2>/dev/null; then
+      [ -n "${CG_DBG:-}" ] && echo "pid $$ got lock" >&2
       if regular_file "$marker"; then
+        [ -n "${CG_DBG:-}" ] && echo "pid $$ recheck ok" >&2
         kind=$(head -n 1 "$marker" 2>/dev/null)
         rm -f "$marker" 2>/dev/null
         rmdir "$marker.lock" 2>/dev/null
@@ -40,6 +43,7 @@ while :; do
         rmdir "$marker.lock" 2>/dev/null
       fi
     fi
+    [ -n "${CG_DBG:-}" ] && echo "pid $$ end of claim block (stale-or-lockfail-or-done)" >&2
     # Test hook: lets the unit tests end the process.
     [ -n "${COMPACTION_GUARD_MONITOR_ONCE:-}" ] && exit 0
   fi
