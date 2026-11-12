@@ -147,6 +147,12 @@ out=$(cd "$T/mproj" && sh "$S/announce-monitor.sh"); eq "a stale marker does not
 wake=$(echo injected > "$mk"; cd "$T/mproj" && sh "$S/announce-monitor.sh")
 check "the wake-up is harmless in a session that has no handoff text" "Otherwise ignore this line" "$wake"
 export COMPACTION_GUARD_MONITOR_WAIT=6
+dbl=0; i=0
+while [ "$i" -lt 60 ]; do i=$((i+1)); rm -rf "$T/mkx" "$T/mkx.a" "$T/mkx.b"
+  ( mkdir "$T/mkx" 2>/dev/null && : > "$T/mkx.a" ) & q1=$!; ( mkdir "$T/mkx" 2>/dev/null && : > "$T/mkx.b" ) & q2=$!; wait "$q1" "$q2"
+  [ -e "$T/mkx.a" ] && [ -e "$T/mkx.b" ] && dbl=$((dbl+1))
+done
+echo "DIAG mkdir double-success: $dbl of 60 ($(uname -sr))"
 trial=0; badtrial=0; counts=""
 while [ "$trial" -lt 5 ]; do
   trial=$((trial+1)); rm -f "$T/m1.out" "$T/m2.out"
