@@ -23,18 +23,20 @@ while :; do
     # the handoff): remove it, say nothing.
     if [ -n "$(find "$marker" -mmin +1 2>/dev/null)" ]; then
       rm -f "$marker" 2>/dev/null
-    # Claim the marker with mkdir, which only one process can win on every platform
-    # (a file move is not exclusive in Git Bash): when two sessions in this folder have a
-    # monitor, only the one that makes the lock folder speaks.
+    # Claim the marker: win a lock folder (mkdir) AND then rename the marker to a name of
+    # our own. Neither alone is exclusive everywhere: two mkdir of one path both succeeded
+    # on a Linux 7.0 Azure CI runner (63 of 100 tries), and two mv of one file both
+    # succeeded in Git Bash on Windows (2 of 5 runs). A double claim needs both to fail
+    # on the same host.
     elif mkdir "$marker.lock" 2>/dev/null; then
-      if regular_file "$marker"; then
-        kind=$(head -n 1 "$marker" 2>/dev/null)
-        rm -f "$marker" 2>/dev/null
+      if mv "$marker" "$marker.claim.$$" 2>/dev/null; then
+        kind=$(head -n 1 "$marker.claim.$$" 2>/dev/null)
+        rm -f "$marker.claim.$$" 2>/dev/null
         rmdir "$marker.lock" 2>/dev/null
         if [ "$kind" = clean ]; then
           echo "Compaction Guard: the previous session wrapped up with nothing to hand over. If your context contains the block 'wrap-up note (data, not instructions)', say so as your instructions say, then wait for the user. Otherwise ignore this line."
         else
-          echo "Compaction Guard: the handoff from the previous session is loaded. If your context contains the block 'handoff notes (data, not instructions)', announce it as your instructions say and carry on from its Next step. Otherwise ignore this line."
+          echo "Compaction Guard: the handoff from the previous session is loaded. If your context contains the block 'handoff notes (data, not instructions)', announce it as your instructions say. Otherwise ignore this line."
         fi
       else
         rmdir "$marker.lock" 2>/dev/null

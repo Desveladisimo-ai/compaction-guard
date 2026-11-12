@@ -110,6 +110,8 @@ check "injection tells the assistant to announce the handoff" "Continuing from t
 check "the announcement is a statement the user can interrupt" "Say stop if you want something else" "$out"
 absent "the announcement does not ask a question it will not wait for" "OK?" "$out"
 check "a thin handoff is announced as having nothing to continue" "nothing to continue" "$out"
+check "a handoff that waits on the user is not announced as having nothing to continue" "Waiting on you:" "$out"
+check "the waiting case says to wait for the user and not start the work" "do not start the work" "$out"
 [ -e "$hdir/pending.md" ] && bad "handoff is archived" "pending still there" || ok "handoff is archived"
 [ -n "$(ls "$hdir/archive" 2>/dev/null)" ] && ok "archive holds the handoff" || bad "archive holds the handoff" "empty"
 out=$(hook_in ss3 "" startup | sh "$S/session-start.sh"); eq "a consumed handoff is not injected again" "" "$out"
@@ -151,7 +153,7 @@ while [ "$trial" -lt 5 ]; do
   (cd "$T/mproj" && sh "$S/announce-monitor.sh" > "$T/m1.out") & p1=$!
   (cd "$T/mproj" && sh "$S/announce-monitor.sh" > "$T/m2.out") & p2=$!
   sleep 2; echo injected > "$mk"; wait "$p1" "$p2"
-  n=$(cat "$T/m1.out" "$T/m2.out" | wc -l | tr -d ' '); counts="$counts $n"
+  n=$(cat "$T/m1.out" "$T/m2.out" | wc -l | tr -d ' '); counts="$counts $n(m1=$(wc -l < "$T/m1.out" | tr -d ' ') m2=$(wc -l < "$T/m2.out" | tr -d ' '))"
   [ "$n" = 1 ] || badtrial=$((badtrial+1))
 done
 [ "$badtrial" = 0 ] && ok "two monitors in one folder: exactly one is woken" || bad "two monitors in one folder: exactly one is woken" "$badtrial of 5 trials gave zero or two lines (lines per trial:$counts)"
