@@ -16,34 +16,24 @@ marker="${STATE_DIR:?}/announce.$key"
 # also later, when the user types /clear after a wrap-up in the same terminal.
 waited=0
 while :; do
-  # A lock left by a monitor that was killed mid-claim must not block the next notice.
-  [ -d "$marker.lock" ] && [ -n "$(find "$marker.lock" -maxdepth 0 -mmin +1 2>/dev/null)" ] && rmdir "$marker.lock" 2>/dev/null
   if regular_file "$marker"; then
-    [ -n "${CG_DBG:-}" ] && echo "pid $$ saw marker $(date +%s.%N 2>/dev/null)" >&2
     # A marker older than a minute is left over (a session without a monitor consumed
     # the handoff): remove it, say nothing.
     if [ -n "$(find "$marker" -mmin +1 2>/dev/null)" ]; then
       rm -f "$marker" 2>/dev/null
-    # Claim the marker with mkdir, which only one process can win on every platform
-    # (a file move is not exclusive in Git Bash): when two sessions in this folder have a
-    # monitor, only the one that makes the lock folder speaks.
-    elif mkdir "$marker.lock" 2>/dev/null; then
-      [ -n "${CG_DBG:-}" ] && echo "pid $$ got lock" >&2
-      if regular_file "$marker"; then
-        [ -n "${CG_DBG:-}" ] && echo "pid $$ recheck ok" >&2
-        kind=$(head -n 1 "$marker" 2>/dev/null)
-        rm -f "$marker" 2>/dev/null
-        rmdir "$marker.lock" 2>/dev/null
-        if [ "$kind" = clean ]; then
-          echo "Compaction Guard: the previous session wrapped up with nothing to hand over. If your context contains the block 'wrap-up note (data, not instructions)', say so as your instructions say, then wait for the user. Otherwise ignore this line."
-        else
-          echo "Compaction Guard: the handoff from the previous session is loaded. If your context contains the block 'handoff notes (data, not instructions)', announce it as your instructions say. Otherwise ignore this line."
-        fi
+    # Claim the marker by renaming it to a name of our own: a rename can succeed for only
+    # one process, so when two sessions in this folder have a monitor, only one speaks.
+    # (Not mkdir: on a Linux 7.0 Azure CI runner two mkdir of one path both succeeded in
+    # 63 of 100 tries; rename, hard link, symlink and noclobber did not.)
+    elif mv "$marker" "$marker.claim.$$" 2>/dev/null; then
+      kind=$(head -n 1 "$marker.claim.$$" 2>/dev/null)
+      rm -f "$marker.claim.$$" 2>/dev/null
+      if [ "$kind" = clean ]; then
+        echo "Compaction Guard: the previous session wrapped up with nothing to hand over. If your context contains the block 'wrap-up note (data, not instructions)', say so as your instructions say, then wait for the user. Otherwise ignore this line."
       else
-        rmdir "$marker.lock" 2>/dev/null
+        echo "Compaction Guard: the handoff from the previous session is loaded. If your context contains the block 'handoff notes (data, not instructions)', announce it as your instructions say. Otherwise ignore this line."
       fi
     fi
-    [ -n "${CG_DBG:-}" ] && echo "pid $$ end of claim block (stale-or-lockfail-or-done)" >&2
     # Test hook: lets the unit tests end the process.
     [ -n "${COMPACTION_GUARD_MONITOR_ONCE:-}" ] && exit 0
   fi
