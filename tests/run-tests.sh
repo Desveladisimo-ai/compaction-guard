@@ -179,6 +179,16 @@ printf '{"session_id":"r1","cwd":"%s"}' "$T/rootp" | sh "$S/session-start.sh" >/
 want="$GUARD_HOME/handoffs/$(project_key "$T/rootp")/pending.md"
 got=$(cd "$T/rootp/sub/deeper" && env -u CLAUDE_PROJECT_DIR sh "$S/handoff-path.sh"); eq "a wrap-up from a subfolder uses the session's project folder" "$want" "$got"
 got=$(cd "$T/proj" && env -u CLAUDE_PROJECT_DIR sh "$S/handoff-path.sh"); eq "a folder that is no session's subfolder keeps its own key" "$GUARD_HOME/handoffs/$(project_key "$T/proj")/pending.md" "$got"
+# the same folder reached through a symbolic link (as /tmp and /private/tmp on macOS) has one handoff key
+if ! skipwin "symbolic link spelling of one folder"; then
+  mkdir -p "$T/realdir" && ln -s "$T/realdir" "$T/linkdir"
+  printf '{"session_id":"l1","cwd":"%s"}' "$T/linkdir" | sh "$S/session-start.sh" >/dev/null
+  a=$(cd "$T/realdir" && env -u CLAUDE_PROJECT_DIR sh "$S/handoff-path.sh")
+  b=$(cd "$T/linkdir" && env -u CLAUDE_PROJECT_DIR sh "$S/handoff-path.sh")
+  eq "a folder reached through a symbolic link has the same handoff path" "$a" "$b"
+  c=$(CLAUDE_PROJECT_DIR="$T/linkdir" sh "$S/handoff-path.sh")
+  eq "CLAUDE_PROJECT_DIR through a symbolic link has the same handoff path" "$a" "$c"
+fi
 p=$(cd "$T/proj" && sh "$S/handoff-path.sh")
 check "handoff path is under the guard home" "$GUARD_HOME/handoffs/" "$p"
 [ -d "$(dirname "$p")/archive" ] && ok "handoff folder created" || bad "handoff folder created" "missing"
