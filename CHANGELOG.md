@@ -2,6 +2,14 @@
 
 All notable changes to this project are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.7] - 2026-11-12
+
+### Fixed
+- The same folder reached through a symbolic link (on macOS `/tmp` and `/private/tmp`, or a linked project folder) had a different handoff key depending on the spelling, so a handoff written from one spelling was not found from the other. The key is now made from the physical path everywhere (the wrap-up, the session start, the monitor). A handoff saved under the old key by a folder that was opened through a link is not found after the update; it can be moved by hand, and a folder opened by its physical path is not affected (closes finding 7 of the [audit](docs/security/audit-2026-11-10.md)).
+
+### Changed
+- The test suite has 144 checks (2 new, for the symbolic link). The 0.1.6 announcement for a handoff that waits on the user was seen in a real interactive session, and read as designed (reported by the maintainer, 2026-11-12).
+
 ## [0.1.6] - 2026-11-12
 
 ### Fixed

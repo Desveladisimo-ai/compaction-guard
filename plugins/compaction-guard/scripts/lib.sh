@@ -126,10 +126,13 @@ window_size() {
   if [ "$2" -gt 200000 ]; then echo "1000000 assumed"; else echo "200000 assumed"; fi
 }
 
-# project_key DIR: readable and stable name for a project folder.
+# project_key DIR: readable and stable name for a project folder. It is made from the
+# physical path, so one folder reached through a symbolic link (for example /tmp and
+# /private/tmp) has one key; a folder that does not exist keeps the path as given.
 project_key() {
-  base=$(basename "$1" | tr -c 'A-Za-z0-9._-' '_')
-  sum=$(printf '%s' "$1" | cksum | cut -d' ' -f1)
+  phys=$(cd "$1" 2>/dev/null && pwd -P || echo "$1")
+  base=$(basename "$phys" | tr -c 'A-Za-z0-9._-' '_')
+  sum=$(printf '%s' "$phys" | cksum | cut -d' ' -f1)
   echo "$base-$sum"
 }
 
@@ -159,9 +162,8 @@ gauge_installed() {
   grep -q 'compaction-guard/statusline.sh' "$CLAUDE_DIR/settings.json" 2>/dev/null
 }
 
-# phys_key DIR: project_key of the physical path, so the hook and the monitor agree
-# even when one of them sees a symbolic link (for example /tmp and /private/tmp).
+# phys_key DIR: same as project_key (kept for the callers that already use it).
 phys_key() {
-  project_key "$(cd "$1" 2>/dev/null && pwd -P || echo "$1")"
+  project_key "$1"
 }
 
