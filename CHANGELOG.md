@@ -2,6 +2,11 @@
 
 All notable changes to this project are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.8] - 2026-11-14
+
+### Changed
+- The plugin and marketplace descriptions now say that the wrap-up shows what it will save before it saves it, and that it saves a handoff and the lasting facts; before, they mentioned only the automatic handoff to the next session.
+
 ## [0.1.7] - 2026-11-12
 
 ### Fixed
