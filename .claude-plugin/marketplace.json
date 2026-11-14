@@ -6,7 +6,7 @@
     {
       "name": "compaction-guard",
       "source": "./plugins/compaction-guard",
-      "description": "Blocks unchosen compaction, warns before the context fills, and hands work to a new session automatically."
+      "description": "Blocks unchosen compaction, warns before the context fills, shows you what it will save, saves it, and hands the work to a new session automatically."
     }
   ]
 }
