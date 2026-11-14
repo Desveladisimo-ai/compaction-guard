@@ -16,5 +16,6 @@ Retrieved 2026-11-06 unless stated. "Observed" means produced by a command in th
 | S10 | Public issue tracker, https://github.com/anthropics/claude-code/issues, search `in:title compact created:>=2026-10-14` (GitHub search API) | 90 issues with "compact" in the title since idle compaction shipped; individual reports, not verified |
 | S11 | The maintainer's session transcript of 2026-10-30 to 2026-11-06 (compact boundary records: trigger, tokens before and after, duration) | measured compactions |
 | S12 | The maintainer's hook logs (`compact-blocked` flag files) of 2026-11-03 | the gate blocking idle compaction |
+| S13 | Public issue tracker, https://github.com/anthropics/claude-code/issues, GitHub search API and issue comments, read 2026-11-14 (issues 98747, 102260, 102666, 105775, 106714 and the 28 others in [the csv](data/idle-compaction-issues-2026-11-14.csv)) | the 33 issues about idle compaction, their categories, the maintainer replies of 2026-10-02 and 2026-10-06, the weekly trend |
 
 Not used and not verified: any claim about why the behavior was chosen beyond what the changelog states; any cost figure for rework (not measured).

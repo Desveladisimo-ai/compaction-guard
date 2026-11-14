@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+  <a href="#why-compaction-guard-exists">Why it exists</a> •
   <a href="#install">Install</a> •
   <a href="#what-it-does">What it does</a> •
   <a href="#what-runs-on-your-machine">What runs on your machine</a> •
@@ -21,6 +22,18 @@
 Claude Code compacts a long conversation automatically, replacing it with a summary, and since October 2026 it can also do so after you have been idle. Whatever the summary leaves out is gone, so work can be re-read, repeated or done wrong afterwards.
 
 **Compaction Guard keeps your place, automatically.** When it is time to change session, it writes a short handoff note (you say yes once), and the next session picks it up by itself: type `/clear` or open a new session, and the assistant tells you where you were and carries on from the next step, with no message from you (interactive sessions). Until the context is nearly full, it also blocks Claude Code's automatic compaction, so nothing is summarized away behind your back, and it warns you and the assistant at 70% and 85% so you choose when to change.
+
+## Why Compaction Guard exists
+
+In October 2026 Claude Code began compacting idle conversations on its own. A long session left alone for about an hour is replaced by a summary shortly before the prompt cache expires, so that the next message does not have to reprocess everything. Compaction is a destructive change: the conversation you built is replaced by a summary, and that cannot be undone inside the session. This one arrived enabled by default, with no warning before it acted. The only notice, which says how to turn it off, comes afterwards.
+
+I saw what that means in my own sessions. Claude Code forgot which of my GitHub accounts we were using on a project I had just started. In another session it stopped in the middle of a set of planned actions and asked me for information it had held a moment before.
+
+Nobody had asked, nobody had warned me, and I had not chosen any of it.
+
+Then I found I was not alone: other users were running into the same thing and saying so. That is when I decided to stop losing information to a destructive feature I had not chosen. I wanted control over when compaction happens, and I wanted what is relevant and important saved automatically before switching to a new session, together with a handoff from the previous session that the new one picks up on its own.
+
+Compaction Guard is built for that gap.
 
 ## Install
 

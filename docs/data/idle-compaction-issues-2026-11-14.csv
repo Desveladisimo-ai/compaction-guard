@@ -1,0 +1,34 @@
+issue,created,state,comments,reactions,category,title,url
+98747,2026-10-01,closed,25,32,harm-or-consent,"[BUG] 2.1.286 idle compaction silently discards working context in long-running sessions; no opt-out, logged as ""manual""",https://github.com/anthropics/claude-code/issues/98747
+102260,2026-10-15,open,8,1,harm-or-consent,"[BUG] Idle compaction was enabled remotely by feature flag with no notice or opt-in",https://github.com/anthropics/claude-code/issues/102260
+102666,2026-10-16,open,5,2,harm-or-consent,"[BUG] Idle auto-compaction far below the context limit makes users pay tokens again to redo lost work",https://github.com/anthropics/claude-code/issues/102666
+105775,2026-10-28,open,2,1,harm-or-consent,"Idle compaction removed the compact / new session / continue choice; make it opt-in and add a desktop toggle",https://github.com/anthropics/claude-code/issues/105775
+106714,2026-11-02,open,3,1,harm-or-consent,"Idle compaction happens silently: please ask the first time, and show a notice when it happens",https://github.com/anthropics/claude-code/issues/106714
+102332,2026-10-15,open,1,0,harm-or-consent,"[Bug] Auto-compact runs while idle after prompt cache expires, forcing manual session restarts",https://github.com/anthropics/claude-code/issues/102332
+106402,2026-10-31,open,4,0,harm-or-consent,"[BUG] Idle compaction fires while background agents are still running",https://github.com/anthropics/claude-code/issues/106402
+108089,2026-11-07,open,1,0,harm-or-consent,"[BUG] Pending idle-compaction summary is still applied after ""idleCompaction"": false is set",https://github.com/anthropics/claude-code/issues/108089
+101070,2026-10-10,open,2,2,more-control,"[FEATURE] Give idle compactions their own trigger value (""idle"")",https://github.com/anthropics/claude-code/issues/101070
+101616,2026-10-12,open,0,1,more-control,"[FEATURE] Configurable token threshold for idle compaction (idleCompactMinTokens)",https://github.com/anthropics/claude-code/issues/101616
+103475,2026-10-19,open,0,0,more-control,"idleCompaction threshold should be a % of context window, not a fixed token count",https://github.com/anthropics/claude-code/issues/103475
+103483,2026-10-19,open,0,1,more-control,"Let idleCompaction: true opt in to idle compaction, and let it run alongside the prompt-cache keepalive",https://github.com/anthropics/claude-code/issues/103483
+103400,2026-10-19,open,3,1,more-control,"[FEATURE] Run a user-defined prompt instead of (or before) idle compaction",https://github.com/anthropics/claude-code/issues/103400
+105473,2026-10-27,open,1,1,more-control,"[FEATURE] Idle compaction that a plugin (or a session) can scope",https://github.com/anthropics/claude-code/issues/105473
+107906,2026-11-06,open,1,0,more-control,"[FEATURE] Turn idle compaction on or off per session (command and Desktop toggle)",https://github.com/anthropics/claude-code/issues/107906
+103040,2026-10-17,closed,3,4,wants-it-in-more-places,"[Feature Request] Add idle compaction support to desktop app Code tab sessions",https://github.com/anthropics/claude-code/issues/103040
+103189,2026-10-18,closed,2,0,wants-it-in-more-places,"Idle compaction for Claude Code Desktop app sessions",https://github.com/anthropics/claude-code/issues/103189
+103866,2026-10-20,open,1,3,wants-it-in-more-places,"[FEATURE] Idle compaction for local background sessions (--bg / claude agents / respawn)",https://github.com/anthropics/claude-code/issues/103866
+103674,2026-10-20,open,3,1,wants-it-in-more-places,"[Feature Request] Idle compaction in the VS Code extension panel",https://github.com/anthropics/claude-code/issues/103674
+105442,2026-10-27,open,2,2,wants-it-in-more-places,"[FEATURE] Idle compaction for sessions spawned by claude rc (currently excluded as non-interactive)",https://github.com/anthropics/claude-code/issues/105442
+103245,2026-10-18,open,1,0,wants-it-in-more-places,"[FEATURE] Idle compaction: arm the timer after `--resume`",https://github.com/anthropics/claude-code/issues/103245
+103244,2026-10-18,open,1,0,wants-it-in-more-places,"[FEATURE] Idle compaction: try again if the 54-minute attempt is skipped or fails",https://github.com/anthropics/claude-code/issues/103244
+103243,2026-10-18,open,0,0,did-not-fire,"[BUG] Idle compaction never runs for `--model opusplan` or `--model haiku`",https://github.com/anthropics/claude-code/issues/103243
+103931,2026-10-21,open,2,0,did-not-fire,"[BUG] Idle compaction doesn't fire on a 200k+ idle terminal session with the Mac awake (2.1.300 to 2.1.305)",https://github.com/anthropics/claude-code/issues/103931
+105877,2026-10-29,open,0,0,did-not-fire,"Idle compaction never runs in a qualifying idle gap (desktop app Code tab, macOS)",https://github.com/anthropics/claude-code/issues/105877
+106166,2026-10-30,open,0,0,did-not-fire,"[Bug] Idle auto-compaction stopped triggering on desktop app after 65+ minutes",https://github.com/anthropics/claude-code/issues/106166
+107073,2026-11-03,open,1,0,did-not-fire,"[BUG] Idle compaction never arms when the 1h cache TTL comes from a gateway instead of the client request",https://github.com/anthropics/claude-code/issues/107073
+107367,2026-11-05,open,3,0,did-not-fire,"Idle compaction skips sessions locked out by a usage limit → full cold cache rewrite after reset",https://github.com/anthropics/claude-code/issues/107367
+107423,2026-11-05,open,3,1,did-not-fire,"[BUG] Remote Control project threads exit after 1 h idle, take 4–8 min to wake, and never compact while idle on a local bridge",https://github.com/anthropics/claude-code/issues/107423
+108789,2026-11-10,open,8,0,did-not-fire,"[BUG] Idle compaction lost in 83% of long pauses: governor eviction and near-limit refusal",https://github.com/anthropics/claude-code/issues/108789
+109382,2026-11-12,open,0,0,did-not-fire,"[BUG] Idle compaction stopped firing on Linux CLI since Nov 11 with no local change",https://github.com/anthropics/claude-code/issues/109382
+103356,2026-10-19,open,0,0,other,"Idle compaction pushes the away recap off-screen with post-compaction re-attachment lines",https://github.com/anthropics/claude-code/issues/103356
+108861,2026-11-10,open,0,0,other,"Idle compaction re-reports ""done"" over OSC 7501, so the terminal shows a new finished turn",https://github.com/anthropics/claude-code/issues/108861

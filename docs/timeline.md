@@ -17,6 +17,8 @@ Automatic compaction has existed in Claude Code since at least May 2025, with a 
 | 2026-03-14 | 2.1.76 | a circuit breaker stops auto-compaction after 3 failed attempts | S1, S2 |
 | 2026-04-01 | 2.1.89 | a loop where context refills right after compacting, three times, now stops with an error | S1, S2 |
 | 2026-04-13 | 2.1.105 | a `PreCompact` hook can block compaction (exit code 2 or a block decision) | S1, S2 |
+| 2026-10-01 | 2.1.286 | first public report of idle compaction, by a user who saw it overnight on 2.1.286 and not on 2.1.285 (the changelog entry that names the feature is 13 days later, in 2.1.299). The reporter of #102260 says it was switched on by a server-side flag | S13 |
+| 2026-10-02 | | a Claude Code maintainer replies on #98747 that a setting is coming | S13 |
 | 2026-10-05 | 2.1.290 | the version from which the `idleCompaction` setting is read | S1, S2 (the entry that names it is in 2.1.299) |
 | 2026-10-07 | 2.1.293 | fixed: the assistant sometimes treated its own last actions before a compaction as not yet done, and redid or retracted finished work | S1, S2 |
 | **2026-10-14** | **2.1.299** | **idle compaction added in the terminal**: a conversation of 200K or more tokens left idle for about 54 minutes is compacted before the one-hour prompt cache expires, so the next message does not reprocess everything. A new variable sets the 200K minimum and `"idleCompaction": false` turns it off | S1, S2, S3 |
@@ -38,7 +40,7 @@ The date of the first public mention differs by a few hours between the npm publ
 
 - It does not show why the default was chosen beyond the stated reason, which is avoiding a full reprocessing when the prompt cache has expired. A cost reason is documented; nothing in the sources speaks to intent beyond that.
 - It does not show a warning before an idle compaction. The changelog describes a notice after it (2.1.302). Whether any client shows a warning before was not found in the sources; not verified.
-- It does not quantify how many people were affected. The public issue tracker has 90 issues since 2026-10-14 with "compact" in the title (S10); they are individual reports and were not verified one by one.
+- It does not count how many people were affected: issues are not a poll. The 33 issues about idle compaction are classified, with the weekly trend, in [idle-compaction-reports.md](idle-compaction-reports.md) (S13).
 
 ## The argument that the sources support
 
